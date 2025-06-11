@@ -1,0 +1,261 @@
+/* تأثيرات الجسيمات الكونية */
+@keyframes quantum-fluctuation {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.95) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) rotate(180deg);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(0.95) rotate(360deg);
+  }
+}
+
+@keyframes singularity-pulse {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.8), 0 0 100px rgba(255, 165, 0, 0.4);
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    transform: scale(1);
+  }
+}
+
+@keyframes text-glow {
+  from {
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+  }
+  to {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 30px rgba(255, 165, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6);
+  }
+}
+
+@keyframes cosmic-drift {
+  0% {
+    transform: translateX(0) translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(10px) translateY(-5px) rotate(90deg);
+  }
+  50% {
+    transform: translateX(-5px) translateY(10px) rotate(180deg);
+  }
+  75% {
+    transform: translateX(-10px) translateY(-10px) rotate(270deg);
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(360deg);
+  }
+}
+
+@keyframes neural-network {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.3;
+  }
+}
+
+/* فئات التأثيرات */
+.cosmic-element {
+  animation: quantum-fluctuation 3s infinite ease-in-out;
+}
+
+.singularity-center {
+  animation: singularity-pulse 4s infinite alternate;
+}
+
+.cosmic-drift {
+  animation: cosmic-drift 8s infinite linear;
+}
+
+.neural-path {
+  animation: neural-network 6s infinite ease-in-out;
+}
+
+/* تحريك الأزرار كنجوم متساقطة */
+.quantum-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quantum-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.quantum-button:hover::before {
+  left: 100%;
+}
+
+.quantum-button:hover {
+  transform: translateY(-5px) scale(1.05);
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 50%, #ffd700 100%);
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+}
+
+/* تأثير الزجاج */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* تأثير النيومورفيزم الكوني */
+.cosmic-neumorphism {
+  background: linear-gradient(145deg, rgba(26, 26, 46, 0.8), rgba(10, 10, 25, 0.9));
+  box-shadow: 20px 20px 60px rgba(0, 0, 0, 0.5), -20px -20px 60px rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+/* تأثير الكتابة الكونية */
+.typewriter {
+  overflow: hidden;
+  border-right: 0.15em solid #ffd700;
+  white-space: nowrap;
+  animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #ffd700;
+  }
+}
+
+/* تأثيرات التمرير */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* تأثيرات الهوفر المتقدمة */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+}
+
+/* تأثير الشبكة العصبية */
+.neural-grid {
+  background-image: radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 165, 0, 0.1) 0%, transparent 50%);
+  background-size: 100px 100px;
+  animation: neural-grid-move 20s linear infinite;
+}
+
+@keyframes neural-grid-move {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+/* تأثيرات الجسيمات المتحركة */
+.particle-field {
+  position: relative;
+  overflow: hidden;
+}
+
+.particle-field::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(2px 2px at 20px 30px, rgba(255, 215, 0, 0.3), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 165, 0, 0.3), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255, 215, 0, 0.4), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255, 165, 0, 0.4), transparent);
+  background-repeat: repeat;
+  background-size: 150px 150px;
+  animation: particle-float 15s linear infinite;
+}
+
+@keyframes particle-float {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-150px, -150px);
+  }
+}
+
+/* تحسينات الاستجابة */
+@media (max-width: 768px) {
+  .quantum-button:hover {
+    transform: none;
+  }
+
+  .hover-lift:hover {
+    transform: none;
+  }
+
+  .cosmic-element {
+    animation-duration: 2s;
+  }
+}
+
+/* تحسينات إمكانية الوصول */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* متغيرات CSS مخصصة */
+:root {
+  --quantum-gold: #ffd700;
+  --quantum-orange: #ffa500;
+  --cosmic-dark: #0a0a19;
+  --cosmic-blue: #1a1a2e;
+  --cosmic-purple: #16213e;
+  --neural-glow: rgba(255, 215, 0, 0.8);
+}
