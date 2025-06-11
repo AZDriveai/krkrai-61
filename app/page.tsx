@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Brain, Search, BarChart3, Code, ImageIcon, Menu, X, ArrowRight, Play, Zap, Crown } from "lucide-react"
 import Link from "next/link"
 import CosmicParticles from "@/components/cosmic-particles"
-import Image from "next/image"
+import OptimizedImage from "@/components/optimized-image"
 
 export default function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -45,7 +45,18 @@ export default function HomePage() {
 
     // تبديل الصور تلقائياً
     const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length)
+      setCurrentImageIndex((prev) => {
+        const nextIndex = (prev + 1) % heroImages.length
+
+        // preload الصورة التالية
+        if (typeof window !== "undefined") {
+          const nextImage = heroImages[(nextIndex + 1) % heroImages.length]
+          const img = new Image()
+          img.src = nextImage.src
+        }
+
+        return nextIndex
+      })
     }, 5000)
 
     return () => clearInterval(interval)
@@ -220,12 +231,14 @@ export default function HomePage() {
                   index === currentImageIndex ? "opacity-30" : "opacity-0"
                 }`}
               >
-                <Image
-                  src={image.src || "/placeholder.svg"}
+                <OptimizedImage
+                  src={image.src}
                   alt={image.alt}
                   fill
                   className="object-cover object-center"
                   priority={index === 0}
+                  quality={75}
+                  sizes="100vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
               </div>
