@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
 
 export async function GET() {
-  try {
-    const { data, error } = await supabase.from("api_keys").select("*").order("created_at", { ascending: false })
-
-    if (error) throw error
-
-    return NextResponse.json({ keys: data })
-  } catch (error) {
-    console.error("Error fetching API keys:", error)
-    return NextResponse.error("Failed to fetch API keys", { status: 500 })
+  const keys = {
+    OPENAI_API_KEY: !!process.env.OPENAI_API_KEY,
+    ANTHROPIC_API_KEY: !!process.env.ANTHROPIC_API_KEY,
+    DEEPSEEK_API_KEY: !!process.env.DEEPSEEK_API_KEY,
+    GROQ_API_KEY: !!process.env.GROQ_API_KEY,
+    XAI_API_KEY: !!process.env.XAI_API_KEY,
+    KRKR_API_KEY: !!process.env.KRKR_API_KEY,
   }
+  return NextResponse.json(keys)
 }

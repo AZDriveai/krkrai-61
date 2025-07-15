@@ -3,6 +3,13 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/toaster"
+import { ErrorBoundary } from "@/components/error-boundary"
+import { CosmicParticles } from "@/components/cosmic-particles"
+import { FontOptimizer } from "@/components/font-optimizer"
+import { SidebarProvider } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
+import { cookies } from "next/headers"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -125,13 +132,16 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
+  const cookieStore = cookies()
+  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true"
+
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang="en" dir="rtl" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -200,9 +210,17 @@ export default function RootLayout({
         <link rel="prefetch" href="/chat" />
       </head>
       <body className={inter.className} suppressHydrationWarning>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
+        <ErrorBoundary>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+            <FontOptimizer />
+            <CosmicParticles />
+            <SidebarProvider defaultOpen={defaultOpen}>
+              <AppSidebar />
+              <main className="flex flex-1 flex-col overflow-hidden">{children}</main>
+            </SidebarProvider>
+            <Toaster />
+          </ThemeProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )

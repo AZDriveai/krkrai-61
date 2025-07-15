@@ -1,28 +1,20 @@
 "use client"
 
 import { useEffect } from "react"
+import FontFaceObserver from "fontfaceobserver"
 
-export default function FontOptimizer() {
+export function FontOptimizer() {
   useEffect(() => {
-    // تحسين تحميل الخطوط
-    if (typeof window !== "undefined" && "fonts" in document) {
-      // تحميل الخطوط بشكل غير متزامن
-      const loadFonts = async () => {
-        try {
-          // تحميل خط Inter
-          await document.fonts.load("400 16px Inter")
-          await document.fonts.load("600 16px Inter")
-          await document.fonts.load("700 16px Inter")
+    const font = new FontFaceObserver("Inter") // Replace 'Inter' with your actual font family name
 
-          // إضافة فئة عند اكتمال تحميل الخطوط
-          document.documentElement.classList.add("fonts-loaded")
-        } catch (error) {
-          console.warn("Font loading failed:", error)
-        }
-      }
-
-      loadFonts()
-    }
+    font
+      .load()
+      .then(() => {
+        document.documentElement.classList.add("fonts-loaded")
+      })
+      .catch((e) => {
+        console.warn("Font could not be loaded:", e)
+      })
   }, [])
 
   return null

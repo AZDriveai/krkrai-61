@@ -5,6 +5,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts"
 import {
   Users,
   MousePointer,
@@ -43,7 +59,45 @@ interface PageAnalytics {
   exitRate: number
 }
 
-export default function UserAnalytics() {
+type UserDemographics = {
+  ageGroup: string
+  users: number
+}
+
+type UserActivity = {
+  hour: string
+  activeUsers: number
+}
+
+type UserRetention = {
+  month: string
+  retainedUsers: number
+}
+
+const userGrowthData = [
+  { name: "Jan", users: 100 },
+  { name: "Feb", users: 120 },
+  { name: "Mar", users: 150 },
+  { name: "Apr", users: 130 },
+  { name: "May", users: 180 },
+  { name: "Jun", users: 200 },
+  { name: "Jul", users: 220 },
+]
+
+const engagementData = [
+  { name: "Mon", sessions: 30, avgDuration: 15 },
+  { name: "Tue", sessions: 45, avgDuration: 20 },
+  { name: "Wed", sessions: 35, avgDuration: 18 },
+  { name: "Thu", sessions: 50, avgDuration: 25 },
+  { name: "Fri", sessions: 40, avgDuration: 22 },
+  { name: "Sat", sessions: 20, avgDuration: 10 },
+  { name: "Sun", sessions: 10, avgDuration: 8 },
+]
+
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A28DFF"]
+
+export function UserAnalytics() {
+  // Changed to named export
   const [activeUsers, setActiveUsers] = useState(127)
   const [totalSessions, setTotalSessions] = useState(1247)
   const [avgSessionDuration, setAvgSessionDuration] = useState(8.5)
@@ -126,8 +180,44 @@ export default function UserAnalytics() {
     },
   ])
 
-  // محاكاة تحديث البيانات في الوقت الفعلي
+  const [demographics, setDemographics] = useState<UserDemographics[]>([])
+  const [activity, setActivity] = useState<UserActivity[]>([])
+  const [retention, setRetention] = useState<UserRetention[]>([])
+
+  // Simulate fetching user analytics data
   useEffect(() => {
+    const fetchUserAnalytics = async () => {
+      // Dummy data for demonstration
+      setDemographics([
+        { ageGroup: "18-24", users: 1200 },
+        { ageGroup: "25-34", users: 2500 },
+        { ageGroup: "35-44", users: 1800 },
+        { ageGroup: "45-54", users: 900 },
+        { ageGroup: "55+", users: 400 },
+      ])
+
+      setActivity([
+        { hour: "00:00", activeUsers: 50 },
+        { hour: "03:00", activeUsers: 30 },
+        { hour: "06:00", activeUsers: 100 },
+        { hour: "09:00", activeUsers: 300 },
+        { hour: "12:00", activeUsers: 500 },
+        { hour: "15:00", activeUsers: 450 },
+        { hour: "18:00", activeUsers: 600 },
+        { hour: "21:00", activeUsers: 350 },
+      ])
+
+      setRetention([
+        { month: "Jan", retainedUsers: 1000 },
+        { month: "Feb", retainedUsers: 950 },
+        { month: "Mar", retainedUsers: 900 },
+        { month: "Apr", retainedUsers: 850 },
+        { month: "May", retainedUsers: 800 },
+      ])
+    }
+
+    fetchUserAnalytics()
+
     const interval = setInterval(() => {
       setActiveUsers((prev) => prev + Math.floor(Math.random() * 10 - 5))
       setTotalSessions((prev) => prev + Math.floor(Math.random() * 5))
@@ -180,7 +270,124 @@ export default function UserAnalytics() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="flex flex-col h-full p-4 space-y-8">
+      <h2 className="text-2xl font-bold mb-4">User Analytics</h2>
+
+      <Tabs defaultValue="growth" className="flex-1 flex flex-col">
+        <TabsList className="mb-4 grid w-full grid-cols-2">
+          <TabsTrigger value="growth">User Growth</TabsTrigger>
+          <TabsTrigger value="engagement">Engagement</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="growth" className="flex-1 flex flex-col">
+          <Card className="flex-1">
+            <CardHeader>
+              <CardTitle>New User Sign-ups</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={userGrowthData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="users" stroke="#8884d8" activeDot={{ r: 8 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="engagement" className="flex-1 flex flex-col">
+          <Card className="flex-1">
+            <CardHeader>
+              <CardTitle>Daily User Engagement</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={engagementData}>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="sessions" fill="#82ca9d" name="Sessions" />
+                  <Bar dataKey="avgDuration" fill="#8884d8" name="Avg. Duration (min)" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* User Demographics */}
+      <Card className="md:col-span-2">
+        <CardHeader>
+          <CardTitle>User Demographics</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={demographics}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={100}
+                fill="#8884d8"
+                dataKey="users"
+                nameKey="ageGroup"
+                label={({ ageGroup, percent }) => `${ageGroup} (${(percent * 100).toFixed(0)}%)`}
+              >
+                {demographics.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* User Activity (Hourly) */}
+      <Card>
+        <CardHeader>
+          <CardTitle>User Activity (Hourly)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={activity}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="hour" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="activeUsers" fill="#82ca9d" name="Active Users" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* User Retention */}
+      <Card className="md:col-span-full">
+        <CardHeader>
+          <CardTitle>User Retention</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={retention}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="retainedUsers" stroke="#FF8042" name="Retained Users" />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
       {/* المؤشرات الرئيسية */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="bg-black/40 border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-300">
@@ -397,7 +604,7 @@ export default function UserAnalytics() {
           </div>
 
           <div className="mt-6 text-center">
-            <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
+            <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 bg-transparent">
               عرض جميع الجلسات
             </Button>
           </div>

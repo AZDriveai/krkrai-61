@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase"
-import { anthropic } from "@/lib/ai-clients"
+import { anthropic, openai, deepseek, groq, xai } from "@/lib/ai-clients"
+import type { TrainingRecord } from "@/types/training-record" // Declare TrainingRecord variable
 
 // Core training configuration
 export const WOLF_AI_CONFIG = {
@@ -381,4 +382,78 @@ export async function initializeWolfAITraining() {
   await trainer.startTraining()
   await trainer.validateModel()
   return trainer
+}
+
+// Functions to manage training data
+interface TrainingData {
+  id?: number
+  prompt: string
+  response: string
+  model_name: string
+  created_at?: string
+}
+
+export async function addTrainingData(data: TrainingData) {
+  if (!supabase) {
+    console.error("Supabase client is not initialized.")
+    return { data: null, error: new Error("Supabase client not available.") }
+  }
+  const { data: newTrainingData, error } = await supabase.from("wolf_training_data").insert([data]).select()
+
+  if (error) {
+    console.error("Error adding training data:", error)
+  } else {
+    console.log("Training data added:", newTrainingData)
+  }
+  return { data: newTrainingData, error }
+}
+
+export async function fetchTrainingData(): Promise<TrainingData[]> {
+  if (!supabase) {
+    console.error("Supabase client is not initialized.")
+    return { data: null, error: new Error("Supabase client not available.") }
+  }
+  const { data, error } = await supabase.from("wolf_training_data").select("*")
+
+  if (error) {
+    console.error("Error fetching training data:", error)
+  } else {
+    console.log("Training data fetched:", data)
+  }
+  return { data, error }
+}
+
+export async function deleteTrainingData(id: number) {
+  if (!supabase) {
+    console.error("Supabase client is not initialized.")
+    return { data: null, error: new Error("Supabase client not available.") }
+  }
+  const { error } = await supabase.from("wolf_training_data").delete().eq("id", id)
+
+  if (error) {
+    console.error("Error deleting training data:", error)
+  } else {
+    console.log("Training data deleted for ID:", id)
+  }
+  return { error }
+}
+
+const models = {
+  openai: openai("gpt-4o"),
+  anthropic: anthropic("claude-3-opus-20240229"),
+  deepseek: deepseek("deepseek-chat"),
+  groq: groq("llama3-8b-8192"),
+  xai: xai("grok-1"),
+}
+
+export async function getTrainingDataRecords(): Promise<TrainingRecord[]> {
+  const { data, error } = await supabase.from("wolf_training_data").select("*")
+
+  if (error) {
+    console.error("Error fetching training data records:", error)
+    return []
+  } else {
+    console.log("Training data records fetched:", data)
+    return data || []
+  }
 }

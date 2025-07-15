@@ -1,30 +1,18 @@
-import { Anthropic } from "@anthropic-ai/sdk"
+import { openai } from "@ai-sdk/openai"
+import { anthropic } from "@ai-sdk/anthropic"
+import { deepseek } from "@ai-sdk/deepseek"
+import { groq } from "@ai-sdk/groq"
+import { xai } from "@ai-sdk/xai"
 
-// Anthropic Claude Client
-export const anthropic = new Anthropic({
-  apiKey:
-    "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",
-})
+// Initialize AI clients with API keys from environment variables
+// These clients are configured to use the respective AI models.
+// Ensure your .env.local file has the corresponding API keys.
 
-// Groq Client
-export const groqClient = {
-  apiKey: "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",
-  baseURL: "https://api.groq.com/openai/v1",
-}
+export const openaiClient = openai(process.env.OPENAI_API_KEY || "")
+export const anthropicClient = anthropic(process.env.ANTHROPIC_API_KEY || "")
+export const deepseekClient = deepseek(process.env.DEEPSEEK_API_KEY || "")
+export const groqClient = groq(process.env.GROQ_API_KEY || "")
+export const xaiClient = xai(process.env.XAI_API_KEY || "")
 
-// xAI Grok Client
-export const xaiClient = {
-  apiKey: "xai-1bCa3vlToW8Y2DZqf7Aln5tNMV2KhFkJXZuAgWP2NwgtGB0ks3Kq0KVUsq4cD7TH9o8iilSxDYiA2wgH",
-  baseURL: "https://api.x.ai/v1",
-}
-
-// DeepSeek Client
-export const deepseekClient = {
-  apiKey: "tgp_v1_10Ez906EpurVzLMQj-dXiy6vYvslKsQ-3q6q_fqXAXM",
-  baseURL: "https://api.deepseek.com/v1",
-}
-
-// Google Gemini Client
-export const geminiClient = {
-  apiKey: "AIzaSyAcKAuJKw1kzOEJa-QHTtkTaFZyiXkJJLs",
-}
+// Export models for direct use in API routes or server components
+export { openai, anthropic, deepseek, groq, xai }

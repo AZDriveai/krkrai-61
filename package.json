@@ -6,13 +6,17 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "test:ai-models": "node scripts/test-ai-models.js"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "latest",
     "@ai-sdk/deepseek": "latest",
     "@ai-sdk/google": "latest",
     "@ai-sdk/groq": "latest",
+    "@ai-sdk/openai": "latest",
     "@ai-sdk/together": "latest",
+    "@ai-sdk/xai": "latest",
     "@anthropic-ai/sdk": "latest",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "latest",
@@ -31,6 +35,7 @@
     "@radix-ui/react-popover": "latest",
     "@radix-ui/react-progress": "latest",
     "@radix-ui/react-radio-group": "latest",
+    "@radix-ui/react-resizable": "^1.0.0",
     "@radix-ui/react-scroll-area": "latest",
     "@radix-ui/react-select": "latest",
     "@radix-ui/react-separator": "latest",
@@ -48,8 +53,9 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "latest",
-    "date-fns": "4.1.0",
+    "date-fns": "latest",
     "embla-carousel-react": "latest",
+    "fontfaceobserver": "latest",
     "input-otp": "latest",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
@@ -73,5 +79,6 @@
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "pnpm@9.x"
 }

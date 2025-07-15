@@ -1,9 +1,10 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
 import Image from "next/image"
+import { OptimizedImage } from "@/components/optimized-image"
 import {
   ExternalLink,
   Github,
@@ -352,7 +353,7 @@ export default function HomePage() {
                     <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 glass-effect rounded-lg px-4 py-2 border-blue-500/30">
                       <div className="text-center">
                         <div className="text-sm font-medium text-white">متاح للعمل</div>
-                        <div className="text-xs text-gray-300">سلطنة عُمان</div>
+                        <div className="text-xs text-gray-400">سلطنة عُمان</div>
                       </div>
                     </div>
                   </div>
@@ -364,6 +365,39 @@ export default function HomePage() {
 
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
           <ArrowDown className="w-6 h-6 text-blue-400/60" />
+        </div>
+      </section>
+
+      {/* New Hero Section */}
+      <section className="w-full py-12 md:py-24 lg:py-32">
+        <div className="container px-4 md:px-6">
+          <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
+            <div className="flex flex-col justify-center space-y-4">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                  Unlock the Power of AI with Krkrai Dashboard
+                </h1>
+                <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                  Your all-in-one solution for advanced analytics, AI-powered insights, and seamless data management.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                <Link href="/dashboard">
+                  <Button>Go to Dashboard</Button>
+                </Link>
+                <Link href="/features">
+                  <Button variant="outline">Learn More</Button>
+                </Link>
+              </div>
+            </div>
+            <OptimizedImage
+              src="/placeholder.svg"
+              width={600}
+              height={400}
+              alt="Hero"
+              className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last"
+            />
+          </div>
         </div>
       </section>
 
@@ -738,6 +772,45 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Key Features Section */}
+      <section className="w-full bg-muted py-12 md:py-24 lg:py-32">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Key Features</h2>
+              <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                Explore the powerful features that make Krkrai Dashboard stand out.
+              </p>
+            </div>
+          </div>
+          <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
+            <Card>
+              <CardHeader>
+                <Brain className="mb-2 h-8 w-8 text-primary" />
+                <CardTitle>AI Assistant</CardTitle>
+              </CardHeader>
+              <CardContent>
+                Leverage cutting-edge AI models for intelligent conversations and automated tasks.
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <Rocket className="mb-2 h-8 w-8 text-primary" />
+                <CardTitle>Performance Monitoring</CardTitle>
+              </CardHeader>
+              <CardContent>Monitor your application's performance in real-time with detailed metrics.</CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <Users className="mb-2 h-8 w-8 text-primary" />
+                <CardTitle>User Analytics</CardTitle>
+              </CardHeader>
+              <CardContent>Gain deep insights into user behavior and engagement to optimize your product.</CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section - محسن */}
       <section id="contact" className="py-20 relative z-10">
         <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl">
@@ -844,6 +917,23 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Start Your Journey Section */}
+      <section className="w-full py-12 md:py-24 lg:py-32">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Ready to get started?</h2>
+              <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                Join thousands of users who are transforming their data into actionable insights.
+              </p>
+            </div>
+            <Link href="/dashboard">
+              <Button size="lg">Start Your Journey</Button>
+            </Link>
           </div>
         </div>
       </section>

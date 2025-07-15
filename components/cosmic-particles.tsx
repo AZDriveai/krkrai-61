@@ -2,20 +2,10 @@
 
 import { useEffect, useRef } from "react"
 
-interface Particle {
-  x: number
-  y: number
-  size: number
-  speedX: number
-  speedY: number
-  color: string
-  opacity: number
-}
-
-export default function CosmicParticles() {
+export function CosmicParticles() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const particlesRef = useRef<Particle[]>([])
-  const animationRef = useRef<number>()
+  const particlesRef = useRef<any[]>([])
+  const animationFrameId = useRef<number | null>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -24,110 +14,128 @@ export default function CosmicParticles() {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
+    let width = window.innerWidth
+    let height = window.innerHeight
+    let mouseX = width / 2
+    let mouseY = height / 2
+
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
+      width = window.innerWidth
+      height = window.innerHeight
+      canvas.width = width
+      canvas.height = height
+      ctx.fillStyle = "white" // Set particle color
+      ctx.strokeStyle = "white" // Set line color
     }
 
-    resizeCanvas()
-    window.addEventListener("resize", resizeCanvas)
+    const handleMouseMove = (event: MouseEvent) => {
+      mouseX = event.clientX
+      mouseY = event.clientY
+    }
 
-    // توليد جسيمات ذهبية كمومية
-    class GoldenParticle implements Particle {
+    class Particle {
       x: number
       y: number
-      size: number
-      speedX: number
-      speedY: number
-      color: string
-      opacity: number
+      vx: number
+      vy: number
+      radius: number
+      alpha: number
 
       constructor() {
-        this.x = Math.random() * canvas.width
-        this.y = Math.random() * canvas.height
-        this.size = Math.random() * 3 + 1
-        this.speedX = (Math.random() - 0.5) * 0.5
-        this.speedY = (Math.random() - 0.5) * 0.5
-        this.opacity = Math.random() * 0.5 + 0.1
-        this.color = `rgba(255, 215, 0, ${this.opacity})`
+        this.x = Math.random() * width
+        this.y = Math.random() * height
+        this.vx = (Math.random() - 0.5) * 0.5 // Slower movement
+        this.vy = (Math.random() - 0.5) * 0.5 // Slower movement
+        this.radius = Math.random() * 1.5 + 0.5 // Smaller particles
+        this.alpha = Math.random() * 0.7 + 0.3 // More transparent
       }
 
       update() {
-        // حركة عشوائية كمومية
-        this.x += this.speedX + (Math.random() - 0.5) * 0.8
-        this.y += this.speedY + (Math.random() - 0.5) * 0.8
+        this.x += this.vx
+        this.y += this.vy
 
-        // إعادة تدوير الجسيمات عند الحافة
-        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1
-        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1
+        // Wrap particles around the screen
+        if (this.x < 0) this.x = width
+        if (this.x > width) this.x = 0
+        if (this.y < 0) this.y = height
+        if (this.y > height) this.y = 0
 
-        // تأثير النبض
-        this.opacity = 0.1 + Math.abs(Math.sin(Date.now() * 0.001 + this.x * 0.01)) * 0.4
-        this.color = `rgba(255, 215, 0, ${this.opacity})`
+        // Attract to mouse slightly
+        const dx = mouseX - this.x
+        const dy = mouseY - this.y
+        const distance = Math.sqrt(dx * dx + dy * dy)
+        const attractionForce = 0.0005 // Very subtle attraction
+
+        if (distance < 300) {
+          this.vx += (dx / distance) * attractionForce
+          this.vy += (dy / distance) * attractionForce
+        }
+
+        // Dampen velocity to prevent infinite acceleration
+        this.vx *= 0.99
+        this.vy *= 0.99
       }
 
       draw() {
-        if (!ctx) return
-        ctx.fillStyle = this.color
         ctx.beginPath()
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
-        ctx.fill()
-
-        // إضافة هالة ذهبية
-        ctx.beginPath()
-        ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255, 215, 0, ${this.opacity * 0.1})`
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`
         ctx.fill()
       }
     }
 
-    // خلق الكون الجسيمي
-    const initParticles = () => {
-      const particleCount = 300
+    const createParticles = (count: number) => {
       particlesRef.current = []
-      for (let i = 0; i < particleCount; i++) {
-        particlesRef.current.push(new GoldenParticle())
+      for (let i = 0; i < count; i++) {
+        particlesRef.current.push(new Particle())
       }
     }
 
-    // محاكاة الزمن الكوني
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.clearRect(0, 0, width, height) // Clear canvas
 
-      // خلفية متدرجة كونية
-      const gradient = ctx.createRadialGradient(
-        canvas.width / 2,
-        canvas.height / 2,
-        0,
-        canvas.width / 2,
-        canvas.height / 2,
-        canvas.width / 2,
-      )
-      gradient.addColorStop(0, "rgba(10, 10, 25, 0.1)")
-      gradient.addColorStop(1, "rgba(0, 0, 0, 0.3)")
-      ctx.fillStyle = gradient
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      // Draw lines between close particles
+      for (let i = 0; i < particlesRef.current.length; i++) {
+        for (let j = i + 1; j < particlesRef.current.length; j++) {
+          const p1 = particlesRef.current[i]
+          const p2 = particlesRef.current[j]
+          const distance = Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2)
 
-      particlesRef.current.forEach((particle) => {
-        particle.update()
-        particle.draw()
+          if (distance < 100) {
+            ctx.beginPath()
+            ctx.moveTo(p1.x, p1.y)
+            ctx.lineTo(p2.x, p2.y)
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 - distance / 300})` // Fading lines
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        }
+      }
+
+      // Update and draw particles
+      particlesRef.current.forEach((p) => {
+        p.update()
+        p.draw()
       })
 
-      animationRef.current = requestAnimationFrame(animate)
+      animationFrameId.current = requestAnimationFrame(animate)
     }
 
-    initParticles()
+    resizeCanvas()
+    createParticles(100) // Number of particles
     animate()
+
+    window.addEventListener("resize", resizeCanvas)
+    window.addEventListener("mousemove", handleMouseMove)
 
     return () => {
       window.removeEventListener("resize", resizeCanvas)
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
+      window.removeEventListener("mousemove", handleMouseMove)
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current)
       }
     }
   }, [])
 
-  return (
-    <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" style={{ background: "transparent" }} />
-  )
+  return <canvas ref={canvasRef} className="cosmic-particles-container" />
 }

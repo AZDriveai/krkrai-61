@@ -1,104 +1,56 @@
 "use client"
 
 import React from "react"
-import { AlertTriangle, RefreshCw } from "lucide-react"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-interface ErrorBoundaryState {
-  hasError: boolean
-  error?: Error
-  errorInfo?: React.ErrorInfo
-}
 
 interface ErrorBoundaryProps {
   children: React.ReactNode
-  fallback?: React.ComponentType<{ error: Error; retry: () => void }>
 }
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+interface ErrorBoundaryState {
+  hasError: boolean
+  error: Error | null
+}
+
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props)
-    this.state = { hasError: false }
+    this.state = { hasError: false, error: null }
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    // Update state so the next render will show the fallback UI.
     return { hasError: true, error }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Error caught by boundary:", error, errorInfo)
-    this.setState({ error, errorInfo })
-
-    // يمكن إضافة تتبع الأخطاء هنا (مثل Sentry)
-    if (typeof window !== "undefined") {
-      // تسجيل الخطأ في التحليلات
-      console.error("WOLF-AI Error:", {
-        error: error.message,
-        stack: error.stack,
-        componentStack: errorInfo.componentStack,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        url: window.location.href,
-      })
-    }
-  }
-
-  retry = () => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined })
+    // You can log the error to an error reporting service
+    console.error("Uncaught error:", error, errorInfo)
   }
 
   render() {
     if (this.state.hasError) {
-      if (this.props.fallback) {
-        const FallbackComponent = this.props.fallback
-        return <FallbackComponent error={this.state.error!} retry={this.retry} />
-      }
-
+      // You can render any custom fallback UI
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0A0A0A] via-[#1A1A2E] to-[#16213E] p-4">
-          <Card className="w-full max-w-md bg-black/40 border-red-500/30 backdrop-blur-md">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="w-8 h-8 text-red-400" />
-              </div>
-              <CardTitle className="text-red-400 text-xl">حدث خطأ غير متوقع</CardTitle>
+        <div className="flex min-h-screen items-center justify-center bg-background p-4">
+          <Card className="w-full max-w-md text-center">
+            <CardHeader>
+              <CardTitle className="text-destructive">Something went wrong!</CardTitle>
+              <CardDescription>We're sorry, but an unexpected error occurred. Please try again.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 text-center">
-              <p className="text-gray-300">نعتذر، حدث خطأ أثناء تشغيل التطبيق. فريق WOLF-AI يعمل على حل هذه المشكلة.</p>
-
-              {process.env.NODE_ENV === "development" && this.state.error && (
-                <details className="text-left bg-black/50 p-3 rounded-lg text-xs text-red-300">
-                  <summary className="cursor-pointer mb-2 font-semibold">تفاصيل الخطأ (وضع التطوير)</summary>
-                  <pre className="whitespace-pre-wrap break-words">
-                    {this.state.error.message}
-                    {"\n\n"}
-                    {this.state.error.stack}
-                  </pre>
-                </details>
+            <CardContent className="space-y-4">
+              {this.state.error && (
+                <div className="rounded-md bg-muted p-4 text-left text-sm text-muted-foreground">
+                  <p className="font-semibold">Error Details:</p>
+                  <pre className="whitespace-pre-wrap break-all font-mono">{this.state.error.message}</pre>
+                  {/* Optionally display stack trace in development */}
+                  {process.env.NODE_ENV === "development" && (
+                    <pre className="mt-2 whitespace-pre-wrap break-all font-mono text-xs">{this.state.error.stack}</pre>
+                  )}
+                </div>
               )}
-
-              <div className="flex flex-col gap-2">
-                <Button
-                  onClick={this.retry}
-                  className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-black hover:from-[#FFA500] hover:to-[#FFD700]"
-                >
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  إعادة المحاولة
-                </Button>
-
-                <Button
-                  variant="outline"
-                  onClick={() => window.location.reload()}
-                  className="border-gray-500 text-gray-300 hover:bg-gray-500/10"
-                >
-                  إعادة تحميل الصفحة
-                </Button>
-              </div>
-
-              <p className="text-xs text-gray-500 mt-4">
-                إذا استمرت المشكلة، يرجى التواصل معنا على: openaziz00@gmail.com
-              </p>
+              <Button onClick={() => window.location.reload()}>Refresh Page</Button>
             </CardContent>
           </Card>
         </div>
@@ -108,5 +60,3 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     return this.props.children
   }
 }
-
-export default ErrorBoundary

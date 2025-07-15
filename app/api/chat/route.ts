@@ -1,28 +1,35 @@
+import { streamText } from "ai"
+import { openai, anthropic, deepseek, groq, xai } from "@/lib/ai-clients"
 import { type NextRequest, NextResponse } from "next/server"
-import { anthropic } from "@/lib/ai-clients"
 
-export async function POST(request: NextRequest) {
-  try {
-    const { messages, model = "claude-3-sonnet-20240229" } = await request.json()
+export async function POST(req: NextRequest) {
+  const { messages, modelName } = await req.json()
 
-    const response = await anthropic.messages.create({
-      model,
-      max_tokens: 4000,
-      temperature: 0.7,
-      messages: messages.map((msg: any) => ({
-        role: msg.role === "user" ? "user" : "assistant",
-        content: msg.content,
-      })),
-    })
-
-    return NextResponse.json({
-      message: {
-        role: "assistant",
-        content: response.content[0].type === "text" ? response.content[0].text : "عذراً، حدث خطأ في معالجة الرد.",
-      },
-    })
-  } catch (error) {
-    console.error("Chat API Error:", error)
-    return NextResponse.json({ error: "حدث خطأ في معالجة طلبك" }, { status: 500 })
+  let model
+  switch (modelName) {
+    case "openai":
+      model = openai("gpt-4o")
+      break
+    case "anthropic":
+      model = anthropic("claude-3-opus-20240229")
+      break
+    case "deepseek":
+      model = deepseek("deepseek-chat")
+      break
+    case "groq":
+      model = groq("llama3-8b-8192")
+      break
+    case "xai":
+      model = xai("grok-1")
+      break
+    default:
+      return NextResponse.json({ error: "Invalid model name" }, { status: 400 })
   }
+
+  const result = await streamText({
+    model,
+    messages,
+  })
+
+  return (result.to = "response()")
 }

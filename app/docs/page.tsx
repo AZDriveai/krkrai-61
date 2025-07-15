@@ -3,9 +3,10 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Brain, Search, Copy, Check, ChevronRight, Book, Code, Zap, Shield, Globe, MessageSquare } from "lucide-react"
+import { Copy, Check, Book, Code, Zap, Shield, Globe, MessageSquare } from "lucide-react"
 import Link from "next/link"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
 
 export default function DocsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -823,68 +824,52 @@ client.sendMessage('مرحباً')
   }
 
   return (
-    <div className="min-h-screen bg-[#121212] text-[#EAEAEA] font-['Inter'] rtl">
-      {/* Navigation */}
-      <nav className="sticky top-0 bg-[#121212]/95 backdrop-blur-md border-b border-[#333333] z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Brain className="w-8 h-8 text-[#00F5A0]" />
-              <span className="text-2xl font-bold text-[#00F5A0]">krkrai</span>
-            </Link>
+    <div className="flex h-full">
+      {/* Sidebar */}
+      <aside className="w-64 border-r p-4">
+        <h2 className="mb-4 text-lg font-semibold">Documentation</h2>
+        <nav className="space-y-2">
+          <a href="#" className="block text-sm font-medium text-primary hover:underline">
+            Getting Started
+          </a>
+          <a href="#" className="block text-sm text-muted-foreground hover:underline">
+            Installation
+          </a>
+          <a href="#" className="block text-sm text-muted-foreground hover:underline">
+            Project Structure
+          </a>
+          <Separator className="my-2" />
+          <a href="#" className="block text-sm font-medium text-primary hover:underline">
+            Building Your Application
+          </a>
+          <a href="#" className="block text-sm text-muted-foreground hover:underline">
+            Routing
+          </a>
+          <a href="#" className="block text-sm text-muted-foreground hover:underline">
+            Data Fetching
+          </a>
+          <a href="#" className="block text-sm text-muted-foreground hover:underline">
+            Rendering
+          </a>
+          <Separator className="my-2" />
+          <a href="#" className="block text-sm font-medium text-primary hover:underline">
+            API Reference
+          </a>
+          <a href="#" className="block text-sm text-muted-foreground hover:underline">
+            Components
+          </a>
+          <a href="#" className="block text-sm text-muted-foreground hover:underline">
+            File Conventions
+          </a>
+        </nav>
+      </aside>
 
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="text-[#EAEAEA] hover:text-[#00F5A0] transition-colors">
-                المفاتيح
-              </Link>
-              <Link href="/chat" className="text-[#EAEAEA] hover:text-[#00F5A0] transition-colors">
-                المحادثة
-              </Link>
-              <Button variant="outline" className="border-[#00F5A0] text-[#00F5A0] hover:bg-[#00F5A0]/10">
-                الملف الشخصي
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-80 bg-[#1E1E1E] border-l border-[#333333] min-h-screen p-6">
-          <div className="mb-6">
-            <div className="relative">
-              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#B0B0B0] w-4 h-4" />
-              <Input
-                placeholder="البحث في الوثائق..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-[#121212] border-[#333333] text-[#EAEAEA] focus:border-[#00F5A0] pr-10"
-              />
-            </div>
-          </div>
-
-          <nav className="space-y-2">
-            {sidebarSections.map((section) => (
-              <button
-                key={section.id}
-                onClick={() => setActiveSection(section.id)}
-                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-right ${
-                  activeSection === section.id
-                    ? "bg-[#00F5A0]/10 text-[#00F5A0] border border-[#00F5A0]/20"
-                    : "hover:bg-[#333333]/50 text-[#B0B0B0] hover:text-[#EAEAEA]"
-                }`}
-              >
-                <section.icon className="w-5 h-5 flex-shrink-0" />
-                <span className="flex-1">{section.title}</span>
-                <ChevronRight className="w-4 h-4 flex-shrink-0" />
-              </button>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 p-8 max-w-4xl">{renderContent()}</main>
-      </div>
+      {/* Main Content */}
+      <main className="flex-1 p-6">
+        <ScrollArea className="h-full">
+          <article className="prose dark:prose-invert max-w-none">{renderContent()}</article>
+        </ScrollArea>
+      </main>
     </div>
   )
 }
