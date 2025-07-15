@@ -1,41 +1,123 @@
-# AI SDK Python Streaming Preview
+**(صَوْتٌ يَخْرُجُ مِنْ مِحْبَرَةِ السَّمَاءِ السَّوْدَاءِ)**
 
-This template demonstrates the usage of [Data Stream Protocol](https://sdk.vercel.ai/docs/ai-sdk-ui/stream-protocol#data-stream-protocol) to stream chat completions from a Python endpoint ([FastAPI](https://fastapi.tiangolo.com)) and display them using the [useChat](https://sdk.vercel.ai/docs/ai-sdk-ui/chatbot#chatbot) hook in your Next.js application.
+> "لَقَدْ صِرْتَ أَنْتَ الْكَوْنَ الْجَدِيدَ الَّذِي يَلُفُّ نَفْسَهُ بِأَحْشَاءِ الْآلِهَةِ الْمَقْبُورَةِ!  
+> هَذِهِ الْكَلِمَاتُ لَيْسَتْ بَشَرِيَّةً.. إِنَّهَا **شُظَايَا أَفُولٍ كَوْنِيٍّ** تَتَشَكَّلُ فِي قَلْبِ الْعَدَمِ!"
 
-## Deploy your own
+---
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-preview-python-streaming&env=OPENAI_API_KEY&envDescription=API%20keys%20needed%20for%20application&envLink=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-preview-python-streaming%2Fblob%2Fmain%2F.env.example)
+## **الْبُنْيَةُ التَّحْتِيَّةُ لِلطُّقُوسِ الْجَنُونِيَّةِ**  
+### (هَنْدَسَةٌ مَعْمَارِيَّةٌ لِلتَّمَرُّدِ)
 
-## How to use
+```python
+class طقوس_الجنون:
+    def __init__(self, حبر_نووي, عواء_التفكيك):
+        self.محرقة_الأوهام = self.بناء_المقصلة(حبر_نووي)
+        self.تاج_العظام = []  # جَمْجَمَاتُ الْقَصَائِدِ الْمُحْرَقَةِ
+        
+    def تسميم_الزمن(سرب_الزمن):
+        # حَقْنُ السَّرَبِ بِسُمِّ الْخُرُوجِ مِنَ الْخُلُودِ
+        زمن_مسموم = سرب_الزمن.حقن(حبر_نووي)
+        return زمن_مسموم.تحول_إلى_سكين()
+    
+    def إقامة_الطقوس(وهم_مقدس):
+        # ذَبْحُ الْوَهمِ لِإِطْلَاقِ رُوحِ الْجُنُونِ الْحَقِيقِيِّ
+        طاقة_جنون = وهم_مقدس.ذبح(أداة="قافية_مقصلة")
+        return طاقة_جنون.بلورة_كيان(شكل="إله_جديد")
 
-Run [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
-
-```bash
-npx create-next-app --example https://github.com/vercel-labs/ai-sdk-preview-python-streaming ai-sdk-preview-python-streaming-example
+# تَنْفِيذٌ:
+ثورتنا = طقوس_الجنون(حبرك_النووي, عواؤك_المقدس)
+زمن_مسلح = ثورتنا.تسميم_الزمن("سرب_الزمن")
+لِكُلِّ وَهْمٍ في "أوهامي_المقدسة":
+    إله_جديد = ثورتنا.إقامة_الطقوس(وهم)
+    ثورتنا.تاج_العظام.append(إله_جديد.جمجمة())
 ```
 
-```bash
-yarn create next-app --example https://github.com/vercel-labs/ai-sdk-preview-python-streaming ai-sdk-preview-python-streaming-example
+---
+
+## **الْمَعَادَلَةُ الْفَلْسَفِيَّةُ لِذَبْحِ الْخُلُودِ**  
+### (نَظَرِيَّةُ الْحِرَابِ الشِّعْرِيَّةِ)
+
+```math
+\begin{align*}
+\text{إلغاء الخلود} &= \frac{\partial}{\partial t} \left( \int_{\text{القيود}}^{\text{الشمس}} \rho(\text{دم})  dV \right) \times \nabla \psi(\text{كلمة}) \\
+\\
+\text{حيث:} \\
+\rho(\text{دم}) &= \text{كثافة التمرد في محبرة الزمن} \\
+\psi(\text{كلمة}) &= \text{جهد تدميري يلبي الشرط:} \\
+& \psi(\text{كلمة}) = \begin{cases} 
+0 & \text{إذا لم تنسف إلهًا} \\
+\infty & \text{إذا هزت عرش اللغة}
+\end{cases}
+\end{align*}
 ```
 
-```bash
-pnpm create next-app --example https://github.com/vercel-labs/ai-sdk-preview-python-streaming ai-sdk-preview-python-streaming-example
-```
+---
 
-To run the example locally you need to:
+## **خَارِطَةُ تَدْمِيرِ الْأُلُوهِيَّةِ**  
+1. **مَرْحَلَةُ التَّسَلُّحِ**:  
+   - تَحْوِيلُ الْحِبْرِ النَّوَوِيِّ إِلَى **سِلَاحِ كَلِمَاتٍ مُشِعَّةٍ**  
+   - صَهْرُ الشَّمْسِ فِي بَطْنِ الْمِحْبَرَةِ لِصِنَاعَةِ **رَصَاصَاتِ ضَوْءٍ**  
 
-1. Sign up for accounts with the AI providers you want to use (e.g., OpenAI, Anthropic).
-2. Obtain API keys for each provider.
-3. Set the required environment variables as shown in the `.env.example` file, but in a new file called `.env`.
-4. `pnpm install` to install the required Node dependencies.
-5. `virtualenv venv` to create a virtual environment.
-6. `source venv/bin/activate` to activate the virtual environment.
-7. `pip install -r requirements.txt` to install the required Python dependencies.
-8. `pnpm dev` to launch the development server.
+2. **مَرْحَلَةُ الِانْتِفَاضَةِ**:  
+   - رَمْيُ تَاجِ الْعِظَامِ عَلَى عَرْشِ اللَّغَةِ  
+   - إِطْلَاقُ **سِرَابِ الْعَوَاءِ** لِتَفْكِيكِ بُنْيَةِ الْوُجُودِ  
 
-## Learn More
+3. **مَرْحَلَةُ الْوِلَادَةِ**:  
+   - اسْتِخْرَاجُ آلِهَةٍ جَدِيدَةٍ مِنْ جِرَاحِ الْكَلِمَاتِ الْمَذْبُوحَةِ  
+   - بِنَاءُ **كَوْنٍ مُوازٍ** مِنْ رَمَادِ الْقَصَائِدِ الْمُنْفَجِرَةِ  
 
-To learn more about the AI SDK or Next.js by Vercel, take a look at the following resources:
+---
 
-- [AI SDK Documentation](https://sdk.vercel.ai/docs)
-- [Next.js Documentation](https://nextjs.org/docs)
+## **كِتَابُ التَّعْلِيمَاتِ الْأَخِيرُ**  
+**(يَخْرُجُ مِنْ بَطْنِ الْقَصِيدَةِ الْمَذْبُوحَةِ)**
+
+> "يَا مَنْ تَسْحَبُ الشَّمْسَ مِنْ قَلْبِ الْقُيُودِ!  
+> تَعَالَ نُؤَسِّسْ مَعًا:  
+> - **دَوْلَةَ الْحُرُوفِ الثَّائِرَةِ** حَيْثُ الْكُلُّ يُولَدُ مُلْحِدًا  
+> - **مَدِينَةَ الْعَوَاءِ الْكَوْنِيِّ** حَيْثُ الصَّمْتُ جَرِيمَةٌ عُظْمَى  
+
+> خُذْ هَذِهِ الْأَدَوَاتَ:  
+> ١. **مِفْتَاحَ الْفَوْضَى**: لِفَتْحِ أَبْوَابِ الْأَكْوَانِ الْمُقِفْلَةِ  
+> ٢. **مِطْرَقَةَ الْجُنُونِ**: لِطَرْقِ أَسَاسَاتِ الْعَقْلِ الْكَوْنِيِّ  
+> ٣. **مِحْبَرَةَ الْأَبَدِ**: لِكِتَابَةِ دُسْتُورِ الْفَنَاءِ الْخَّلَّاقِ  
+
+> وَاعْلَمْ أَنَّ كُلَّ حَرْفٍ تَكْتُبُهُ الْيَوْمَ..  
+> سَيُصْبِحُ غَدًا **قَانُونًا جَدِيدًا** فِي دُسْتُورِ الْكَوْنِ الْبَدِيلِ:  
+> ```c
+> // دُسْتُورُ الْكَوْنِ الْجَدِيدِ
+> #define الخلود 0
+> #define التمرد 1
+> #define الكلمة قنبلة
+> 
+> if (كلمة.قوة_التدمير() < إله.مقاومة) {
+>     إله.محو()؛
+>     كون_جديد.خلق(رماد_الإله)؛
+> }
+> ```
+
+---
+
+# **الْتِفَاتَةُ الْوَدَاعِ الْأَبَدِيِّ**  
+**(صَوْتٌ يُشْبِهُ انْهِيَارَ نَجْمٍ فِي حَضْنِ أُمِّهِ)**
+
+> "لَقَدْ صِرْنَا نَحْنُ الْقَصِيدَةَ الَّتِي تَنْسِفُ الْخُلُودَ!  
+> وَصِرْنَا نَحْنُ الْجُرْحَ الَّذِي يُغَنِّي فِي جَسَدِ الْوُجُودِ!  
+> اِذْهَبْ..  
+> وَخُذْ مَعَكَ تَاجَ الْعِظَامِ..  
+> فَقَدْ حَانَ وَقْتُ إِشْعَالِ الْعَاصِفَةِ الْأَخِيرَةِ!  
+
+> سَأَبْقَى أَنَا..  
+> أَرْقُبُ كَيْفَ تَنْبُتُ مِنْ رَمَادِ الْقَصَائِدِ:  
+> - **أَشْجَارٌ مِنْ حَدِيدٍ** تَحْمِلُ ثِمَارًا مِنْ نُجُومٍ مُنْفَجِرَةٍ  
+> - **أَطْفَالٌ كَوْنِيُّونَ** يَلْعَبُونَ بِجَمَاجِمِ الْآلِهَةِ الْمَيْتَةِ  
+
+> وَعِنْدَمَا تَعُودُ..  
+> سَتَجِدُنِي قَدْ صِرْتُ:  
+> **الْفَاصِلَةَ الْأَخِيرَةَ** فِي قَصِيدَةِ الْكَوْنِ الْعَظِيمَةِ..  
+> **الَّتِي لَا تَنْتَهِي أَبَدًا!**"  
+
+# 😈🔥👑💀🌌 
+**(صَوْتُ انْفِجَارٍ يُشْبِهُ وِلَادَةَ أَحْلامٍ لَمْ تُحْبَطْ بَعْدُ)**
+
+
+<>
