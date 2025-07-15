@@ -1,440 +1,982 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Brain, Search, BarChart3, Code, ImageIcon, Menu, X, ArrowRight, Play, Zap, Crown } from "lucide-react"
 import Link from "next/link"
-import CosmicParticles from "@/components/cosmic-particles"
-import OptimizedImage from "@/components/optimized-image"
+import Image from "next/image"
+import {
+  ExternalLink,
+  Github,
+  Mail,
+  ArrowDown,
+  Brain,
+  Rocket,
+  MessageSquare,
+  Users,
+  Star,
+  Code,
+  Database,
+  Cpu,
+  Globe,
+  BookOpen,
+  TrendingUp,
+  Zap,
+  Shield,
+  X,
+} from "lucide-react"
+import { useEffect, useState, useRef } from "react"
+import { cn } from "@/lib/utils"
 
 export default function HomePage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [scrollY, setScrollY] = useState(0)
+  const [mounted, setMounted] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [messages, setMessages] = useState([
+    {
+      sender: "ai",
+      text: "مرحباً! أنا Dr X، مساعدك الذكي المتطور. كيف يمكنني مساعدتك اليوم؟",
+    },
+  ])
+  const [chatInput, setChatInput] = useState("")
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const heroImages = [
-    {
-      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/3rbai-avatar.webp-S8a1ihjX8u4beyVIQS6gmaoOjdbtSm.jpeg",
-      alt: "3rbai Avatar - The Digital Consciousness",
-      title: "الوعي الرقمي",
-      subtitle: "حيث تلتقي الروح بالتكنولوجيا",
-    },
-    {
-      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_20250603_014535_443.webp-aAGni9u74u1sFo34X88FB3t8GYjjZy.jpeg",
-      alt: "Abstract Portrait - The Fragmented Mind",
-      title: "العقل المجزأ",
-      subtitle: "في أعماق الفكر والإبداع",
-    },
-    {
-      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/wolf.jpg-JMdsAZyORmn0LpVLPPf8TfwGKtBzwW.jpeg",
-      alt: "Wolf in Shadows - The Guardian",
-      title: "الحارس الصامت",
-      subtitle: "في ظلال الحكمة القديمة",
-    },
-    {
-      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/wolfai.jpg-36jQ9KbKQk9z2VYE3AWqK2nL8wHVd3.jpeg",
-      alt: "Dark Landscape - The Journey",
-      title: "رحلة في الظلام",
-      subtitle: "نحو نور المعرفة",
-    },
-  ]
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
 
   useEffect(() => {
-    setIsVisible(true)
-
-    // تبديل الصور تلقائياً
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => {
-        const nextIndex = (prev + 1) % heroImages.length
-
-        // preload الصورة التالية
-        if (typeof window !== "undefined") {
-          const nextImage = heroImages[(nextIndex + 1) % heroImages.length]
-          const img = new Image()
-          img.src = nextImage.src
-        }
-
-        return nextIndex
-      })
-    }, 5000)
-
-    return () => clearInterval(interval)
+    setMounted(true)
+    const handleScroll = () => setScrollY(window.scrollY)
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const capabilities = [
-    {
-      icon: Search,
-      title: "البحث الذكي المتقدم",
-      description: "تقنيات بحث متطورة تستخدم الذكاء الاصطناعي لفهم السياق والمعنى",
-      color: "from-yellow-400 to-orange-500",
-    },
-    {
-      icon: BarChart3,
-      title: "تحليل البيانات العميق",
-      description: "قدرات تحليلية متقدمة تحول البيانات الخام إلى رؤى قابلة للتنفيذ",
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      icon: Code,
-      title: "البرمجة الذكية المتطورة",
-      description: "مساعد برمجي متقدم يفهم السياق ويولد أكواداً عالية الجودة",
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      icon: ImageIcon,
-      title: "الإبداع المرئي الثوري",
-      description: "قدرات إبداعية متقدمة في توليد وتحليل الصور والتصاميم",
-      color: "from-green-500 to-emerald-500",
-    },
-  ]
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  const sendMessage = () => {
+    if (chatInput.trim()) {
+      const userMessage = chatInput.trim()
+      setMessages((prevMessages) => [...prevMessages, { sender: "user", text: userMessage }])
+      setChatInput("")
+
+      setTimeout(() => {
+        setMessages((prevMessages) => [...prevMessages, { sender: "ai", text: getAIResponse(userMessage) }])
+      }, 1000)
+    }
+  }
+
+  const quickMessage = (message: string) => {
+    setMessages((prevMessages) => [...prevMessages, { sender: "user", text: message }])
+    setTimeout(() => {
+      setMessages((prevMessages) => [...prevMessages, { sender: "ai", text: getAIResponse(message) }])
+    }, 1000)
+  }
+
+  const getAIResponse = (message: string) => {
+    const responses = [
+      "شكراً لك على سؤالك! أنا هنا لمساعدتك في أي استفسار تقني.",
+      "هذا سؤال ممتاز! دعني أساعدك في العثور على الحل المناسب.",
+      "أقدر اهتمامك بالتكنولوجيا. سأقوم بتزويدك بأفضل الإجابات.",
+      "رائع! هذا المجال من تخصصي. دعني أشاركك المعلومات المفيدة.",
+      "أحب هذا النوع من الأسئلة! سأقدم لك إجابة شاملة ومفيدة.",
+    ]
+    return responses[Math.floor(Math.random() * responses.length)]
+  }
+
+  if (!mounted) return null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A0A0A] via-[#1A1A2E] to-[#16213E] text-white overflow-hidden relative">
-      {/* الجسيمات الكونية */}
-      <CosmicParticles />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-x-hidden">
+      {/* Skip to content for accessibility */}
+      <a href="#main-content" className="skip-to-content">
+        انتقل إلى المحتوى الرئيسي
+      </a>
 
-      {/* شريط التنقل */}
-      <nav className="fixed top-0 w-full z-50 glass-effect border-b border-white/20 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-[#FFD700] to-[#FFA500] rounded-full flex items-center justify-center shadow-lg shadow-yellow-500/25 animate-pulse">
-                <Brain className="w-7 h-7 text-black" />
-              </div>
-              <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">
-                  krkrai
-                </span>
-                <div className="text-xs text-gray-400">WOLF-AI CROWN</div>
-              </div>
-            </div>
-
-            <div className="hidden md:flex items-center gap-8">
-              <Link
-                href="/"
-                className="text-white hover:text-[#FFD700] transition-all duration-300 font-medium relative group"
-              >
-                الرئيسية
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FFD700] transition-all group-hover:w-full"></span>
-              </Link>
-              <Link
-                href="/dashboard"
-                className="text-gray-300 hover:text-[#FFD700] transition-all duration-300 font-medium relative group"
-              >
-                لوحة التحكم
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FFD700] transition-all group-hover:w-full"></span>
-              </Link>
-              <Link
-                href="/docs"
-                className="text-gray-300 hover:text-[#FFD700] transition-all duration-300 font-medium relative group"
-              >
-                الوثائق
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FFD700] transition-all group-hover:w-full"></span>
-              </Link>
-              <Link
-                href="/features"
-                className="text-gray-300 hover:text-[#FFD700] transition-all duration-300 font-medium relative group"
-              >
-                الميزات
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FFD700] transition-all group-hover:w-full"></span>
-              </Link>
-              <Link
-                href="/training"
-                className="text-gray-300 hover:text-[#FFD700] transition-all duration-300 font-medium relative group"
-              >
-                التدريب
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FFD700] transition-all group-hover:w-full"></span>
-              </Link>
-              <Link
-                href="/chat"
-                className="text-gray-300 hover:text-[#FFD700] transition-all duration-300 font-medium relative group"
-              >
-                المحادثة
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FFD700] transition-all group-hover:w-full"></span>
-              </Link>
-            </div>
-
-            <div className="hidden md:flex items-center gap-4">
-              <Button
-                variant="outline"
-                className="border-[#FFD700] text-[#FFD700] hover:bg-[#FFD700]/10 transition-all duration-300"
-              >
-                تسجيل الدخول
-              </Button>
-              <Button className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-black hover:shadow-lg hover:shadow-yellow-500/25 transition-all duration-300 hover:scale-105">
-                <Crown className="w-4 h-4 mr-2" />
-                ابدأ الآن
-              </Button>
-            </div>
-
-            <button
-              className="md:hidden text-white hover:text-[#FFD700] transition-all duration-300"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
+      {/* Animated Background */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900/50 to-purple-900/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent" />
+        {/* Floating particles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(30)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-blue-400/40 rounded-full animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${2 + Math.random() * 3}s`,
+              }}
+            />
+          ))}
         </div>
+      </div>
 
-        {/* القائمة المحمولة */}
-        {isMenuOpen && (
-          <div className="md:hidden glass-effect border-t border-white/20 backdrop-blur-md">
-            <div className="px-4 py-6 space-y-4">
-              <Link href="/" className="block py-2 text-white hover:text-[#FFD700] transition-all duration-300">
-                الرئيسية
-              </Link>
-              <Link
-                href="/dashboard"
-                className="block py-2 text-gray-300 hover:text-[#FFD700] transition-all duration-300"
-              >
-                لوحة التحكم
-              </Link>
-              <Link href="/docs" className="block py-2 text-gray-300 hover:text-[#FFD700] transition-all duration-300">
-                الوثائق
-              </Link>
-              <Link
-                href="/features"
-                className="block py-2 text-gray-300 hover:text-[#FFD700] transition-all duration-300"
-              >
-                الميزات
-              </Link>
-              <Link
-                href="/training"
-                className="block py-2 text-gray-300 hover:text-[#FFD700] transition-all duration-300"
-              >
-                التدريب
-              </Link>
-              <Link href="/chat" className="block py-2 text-gray-300 hover:text-[#FFD700] transition-all duration-300">
-                المحادثة
-              </Link>
-              <div className="pt-4 space-y-2">
-                <Button variant="outline" className="w-full border-[#FFD700] text-[#FFD700]">
-                  تسجيل الدخول
-                </Button>
-                <Button className="w-full bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-black">ابدأ الآن</Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* القسم الرئيسي */}
-      <section className="min-h-screen flex items-center justify-center relative pt-20">
-        {/* الصورة الخلفية المتغيرة */}
-        <div className="absolute inset-0 z-10">
-          <div className="relative w-full h-full">
-            {heroImages.map((image, index) => (
-              <div
-                key={index}
-                className={`absolute inset-0 transition-opacity duration-1000 ${
-                  index === currentImageIndex ? "opacity-30" : "opacity-0"
-                }`}
-              >
-                <OptimizedImage
-                  src={image.src}
-                  alt={image.alt}
-                  fill
-                  className="object-cover object-center"
-                  priority={index === 0}
-                  quality={75}
-                  sizes="100vw"
+      {/* Header */}
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+          scrollY > 50 ? "bg-slate-900/95 backdrop-blur-md py-2 border-b border-blue-500/20" : "py-4"
+        }`}
+      >
+        <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl relative">
+          <nav className="flex items-center justify-between gap-4">
+            <Link href="/" aria-label="عبد العزيز الحمداني - الصفحة الرئيسية" className="z-50 flex items-center gap-3">
+              <div className="relative w-10 h-10">
+                <Image
+                  src="/images/logo.png"
+                  alt="Display Information Logo"
+                  width={40}
+                  height={40}
+                  className="object-contain animate-glow"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
               </div>
-            ))}
-          </div>
+              <div className="text-2xl font-bold gradient-text hover:scale-105 transition-transform">
+                عبد العزيز الحمداني
+              </div>
+            </Link>
+
+            <ul className="ml-3 hidden flex-grow gap-6 lg:flex">
+              <li>
+                <Link
+                  className="text-blue-400 font-medium px-3 py-2 text-sm hover:text-blue-300 hover:bg-white/5 rounded-lg transition-all duration-200"
+                  href="#skills"
+                >
+                  المهارات
+                </Link>
+              </li>
+              <li>
+                <Link
+                  className="text-white/70 font-medium px-3 py-2 text-sm hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200"
+                  href="#projects"
+                >
+                  المشاريع
+                </Link>
+              </li>
+              <li>
+                <Link
+                  className="text-white/70 font-medium px-3 py-2 text-sm hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200"
+                  href="#about"
+                >
+                  من أنا
+                </Link>
+              </li>
+              <li>
+                <Link
+                  className="text-white/70 font-medium px-3 py-2 text-sm hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200"
+                  href="#contact"
+                >
+                  تواصل معي
+                </Link>
+              </li>
+            </ul>
+
+            <div className="flex gap-3">
+              <Link href="/chat">
+                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 rounded-full px-6 py-2 font-medium shadow-lg hover:shadow-blue-500/25 brand-shadow">
+                  ابدأ المحادثة
+                </Button>
+              </Link>
+            </div>
+          </nav>
         </div>
+      </header>
 
-        <div
-          className={`max-w-6xl mx-auto text-center px-4 z-20 relative transition-all duration-1000 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <div className="mb-8">
-            <h1 className="text-6xl md:text-8xl font-bold mb-6 leading-tight">
-              <span className="bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] bg-clip-text text-transparent animate-pulse">
-                WOLF-AI
-              </span>
-              <br />
-              <span className="text-white text-4xl md:text-5xl">{heroImages[currentImageIndex].title}</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-4">{heroImages[currentImageIndex].subtitle}</p>
-          </div>
-
-          <p className="text-lg md:text-xl text-gray-400 mb-12 max-w-4xl mx-auto leading-relaxed">
-            منصة الذكاء الاصطناعي المتقدمة التي تجمع بين قوة الذئب وحكمة التكنولوجيا. اكتشف عالماً جديداً من الإمكانيات
-            اللامحدودة حيث يلتقي الإبداع بالذكاء الاصطناعي.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-            <Link href="/chat">
-              <Button className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-black hover:shadow-lg hover:shadow-yellow-500/25 px-10 py-4 text-lg font-semibold transition-all duration-300 hover:scale-105 rounded-xl">
-                <Play className="w-5 h-5 ml-2" />
+      {/* Mobile Menu */}
+      <div
+        id="mobile-menu"
+        className={cn(
+          "md:hidden fixed top-0 left-0 w-full h-full bg-slate-900/95 backdrop-blur-md z-40 transition-transform duration-300 ease-in-out",
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full",
+        )}
+      >
+        <div className="flex justify-end p-4">
+          <button onClick={toggleMobileMenu} className="text-white hover:text-blue-400">
+            <X className="w-8 h-8" />
+          </button>
+        </div>
+        <ul className="flex flex-col items-center justify-center h-full gap-6 text-xl">
+          <li>
+            <Link
+              className="text-blue-400 font-medium px-3 py-2 hover:text-blue-300 hover:bg-white/5 rounded-lg transition-all duration-200"
+              href="#skills"
+              onClick={toggleMobileMenu}
+            >
+              المهارات
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="text-white/70 font-medium px-3 py-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200"
+              href="#projects"
+              onClick={toggleMobileMenu}
+            >
+              المشاريع
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="text-white/70 font-medium px-3 py-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200"
+              href="#about"
+              onClick={toggleMobileMenu}
+            >
+              من أنا
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="text-white/70 font-medium px-3 py-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200"
+              href="#contact"
+              onClick={toggleMobileMenu}
+            >
+              تواصل معي
+            </Link>
+          </li>
+          <li>
+            <Link href="/chat" onClick={toggleMobileMenu}>
+              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 rounded-full px-6 py-2 font-medium shadow-lg hover:shadow-blue-500/25 brand-shadow">
                 ابدأ المحادثة
               </Button>
             </Link>
-            <Link href="/training">
-              <Button
-                variant="outline"
-                className="border-2 border-[#FFD700] text-[#FFD700] hover:bg-[#FFD700]/10 px-10 py-4 text-lg font-semibold transition-all duration-300 hover:scale-105 rounded-xl"
-              >
-                <Zap className="w-5 h-5 ml-2" />
-                مركز التدريب
-              </Button>
-            </Link>
-          </div>
+          </li>
+        </ul>
+      </div>
 
-          {/* مؤشرات الصور */}
-          <div className="flex justify-center gap-2 mb-8">
-            {heroImages.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentImageIndex(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentImageIndex
-                    ? "bg-[#FFD700] shadow-lg shadow-yellow-500/50"
-                    : "bg-white/30 hover:bg-white/50"
-                }`}
-              />
-            ))}
+      {/* Hero Section - محسن مع الشعار */}
+      <section id="main-content" className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0" style={{ transform: `translateY(${scrollY * 0.5}px)` }}>
+          <div className="absolute -inset-x-0 bottom-28 lg:bottom-12 flex justify-center">
+            <div className="max-w-7xl w-full flex justify-center items-center">
+              <div className="opacity-5 lg:opacity-10 select-none text-[15rem] lg:text-[20rem] font-bold tracking-wider text-blue-500/20 animate-pulse">
+                عبد العزيز
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl flex h-full flex-col relative z-10">
+          <div className="flex items-center justify-center h-full mt-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl w-full">
+              {/* النص والمحتوى */}
+              <div className="text-center lg:text-right space-y-8 animate-fade-in-up">
+                <div className="inline-flex items-center gap-3 glass-effect rounded-full px-6 py-3 text-sm text-white/90 border border-blue-500/30 mb-6">
+                  <div className="relative w-6 h-6">
+                    <Image src="/images/logo.png" alt="Logo" width={24} height={24} className="object-contain" />
+                  </div>
+                  <Star className="w-4 h-4 text-yellow-400" />
+                  <span>مهندس برمجيات من سلطنة عُمان</span>
+                </div>
+
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+                  <span className="gradient-text animate-float">عبد العزيز الحمداني</span>
+                  <br />
+                  <span className="text-white text-2xl md:text-3xl lg:text-4xl">خبير الذكاء الاصطناعي</span>
+                </h1>
+
+                <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed animate-slide-in-right">
+                  مهندس برمجيات متخصص في Python والذكاء الاصطناعي، أطور حلول RAG المتقدمة وأعمل مع Groq API لإنشاء
+                  تطبيقات ذكية عالية الأداء
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slide-in-left pt-4">
+                  <Link href="/chat">
+                    <Button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 rounded-full px-8 py-4 text-lg font-medium shadow-xl hover:shadow-blue-500/30 hover:scale-105 group brand-shadow">
+                      <MessageSquare className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
+                      تحدث معي
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    className="border-blue-400/30 text-white hover:bg-blue-500/10 hover:border-blue-400/50 rounded-full px-8 py-4 text-lg font-medium bg-transparent backdrop-blur-sm group"
+                    asChild
+                  >
+                    <Link href="#projects">
+                      <Code className="w-5 h-5 ml-2 group-hover:scale-110 transition-transform" />
+                      شاهد أعمالي
+                    </Link>
+                  </Button>
+                </div>
+
+                {/* روابط التواصل */}
+                <div className="flex gap-4 justify-center lg:justify-start pt-6">
+                  <Link
+                    href="https://github.com/wolfomani"
+                    className="glass-effect rounded-full p-3 hover:bg-blue-500/20 transition-all duration-300 group border-blue-500/30"
+                    aria-label="GitHub Profile"
+                  >
+                    <Github className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  </Link>
+                  <Link
+                    href="https://t.me/wolfaiOM"
+                    className="glass-effect rounded-full p-3 hover:bg-blue-500/20 transition-all duration-300 group border-blue-500/30"
+                    aria-label="Telegram"
+                  >
+                    <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  </Link>
+                  <Link
+                    href="mailto:openaziz00@gmail.com"
+                    className="glass-effect rounded-full p-3 hover:bg-blue-500/20 transition-all duration-300 group border-blue-500/30"
+                    aria-label="Email"
+                  >
+                    <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  </Link>
+                </div>
+              </div>
+
+              {/* الصورة الشخصية */}
+              <div className="flex justify-center lg:justify-end">
+                <div className="relative group">
+                  <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <Image
+                      src="/images/profile-photo.jpg"
+                      alt="عبد العزيز الحمداني - مهندس برمجيات متخصص في الذكاء الاصطناعي"
+                      width={400}
+                      height={400}
+                      className="w-80 h-80 md:w-96 md:h-96 rounded-full object-cover border-4 border-blue-500/20 shadow-2xl group-hover:scale-105 transition-all duration-300 profile-image"
+                      loading="eager"
+                      priority
+                    />
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-t from-black/20 to-transparent"></div>
+
+                    {/* شارة الحالة */}
+                    <div className="absolute bottom-8 right-8 bg-green-500 w-6 h-6 rounded-full border-4 border-white shadow-lg animate-pulse"></div>
+
+                    {/* معلومات إضافية */}
+                    <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 glass-effect rounded-lg px-4 py-2 border-blue-500/30">
+                      <div className="text-center">
+                        <div className="text-sm font-medium text-white">متاح للعمل</div>
+                        <div className="text-xs text-gray-300">سلطنة عُمان</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <ArrowDown className="w-6 h-6 text-blue-400/60" />
         </div>
       </section>
 
-      {/* قسم القدرات */}
-      <section className="py-32 px-4 relative z-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">
-              قدرات WOLF-AI
+      {/* Skills Section - محسن بالألوان الجديدة */}
+      <section id="skills" className="py-20 relative z-10">
+        <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 glass-effect rounded-full px-4 py-2 text-sm text-gray-300 mb-6 border-blue-500/20">
+              <Code className="w-4 h-4 text-blue-400" />
+              <span>المهارات التقنية</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6 gradient-text">
+              خبراتي التقنية
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-[#FFD700] to-[#FFA500] mx-auto rounded-full mb-8"></div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              اكتشف مجموعة شاملة من الأدوات الذكية المصممة لتحويل طريقة عملك وتفكيرك
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              متخصص في تطوير حلول الذكاء الاصطناعي المتقدمة باستخدام أحدث التقنيات
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {capabilities.map((capability, index) => (
-              <Card
-                key={index}
-                className="bg-black/40 border border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-500 hover:scale-105 group cursor-pointer"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <CardContent className="p-8 text-center">
-                  <div
-                    className={`w-20 h-20 bg-gradient-to-r ${capability.color} rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 shadow-lg`}
-                  >
-                    <capability.icon className="w-10 h-10 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-4 text-white group-hover:text-[#FFD700] transition-all duration-300">
-                    {capability.title}
-                  </h3>
-                  <p className="text-gray-400 leading-relaxed text-sm group-hover:text-gray-300 transition-all duration-300">
-                    {capability.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* قسم الدعوة للعمل */}
-      <section className="py-32 px-4 bg-gradient-to-r from-[#FFD700]/10 to-[#FFA500]/10 relative z-20">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-8 text-white">جاهز لتجربة قوة الذئب؟</h2>
-          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
-            انضم إلى آلاف المطورين والشركات الذين يستخدمون WOLF-AI لتحويل أفكارهم إلى واقع
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Link href="/chat">
-              <Button className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-black hover:shadow-lg hover:shadow-yellow-500/25 px-12 py-4 text-lg font-bold transition-all duration-300 hover:scale-105 rounded-xl">
-                ابدأ رحلتك الآن
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
-            <Link href="/docs">
-              <Button
-                variant="outline"
-                className="border-2 border-[#FFD700] text-[#FFD700] hover:bg-[#FFD700]/10 px-12 py-4 text-lg font-bold transition-all duration-300 hover:scale-105 rounded-xl"
-              >
-                استكشف الوثائق
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* التذييل */}
-      <footer className="bg-black/60 border-t border-white/10 py-16 px-4 relative z-20 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-            <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-[#FFD700] to-[#FFA500] rounded-full flex items-center justify-center">
-                  <Brain className="w-6 h-6 text-black" />
+            <Card className="professional-card hover-lift group">
+              <CardContent className="p-6 text-center">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform brand-shadow">
+                  <Code className="w-8 h-8 text-white" />
                 </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">
-                  krkrai
-                </span>
-              </div>
-              <p className="text-gray-400 leading-relaxed max-w-md">
-                منصة الذكاء الاصطناعي المتقدمة التي توفر حلولاً مبتكرة للشركات والمطورين والأفراد في جميع أنحاء العالم.
-              </p>
-            </div>
+                <h3 className="text-xl font-bold mb-3 text-white">Python</h3>
+                <p className="text-gray-400 text-sm mb-4">تطوير التطبيقات والذكاء الاصطناعي</p>
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full w-[95%] animate-glow"></div>
+                </div>
+                <span className="text-xs text-gray-400 mt-2 block">95%</span>
+              </CardContent>
+            </Card>
 
-            <div>
-              <h4 className="text-lg font-semibold text-white mb-4">روابط سريعة</h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/" className="text-gray-400 hover:text-[#FFD700] transition-all duration-300">
-                    الرئيسية
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/dashboard" className="text-gray-400 hover:text-[#FFD700] transition-all duration-300">
-                    لوحة التحكم
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/docs" className="text-gray-400 hover:text-[#FFD700] transition-all duration-300">
-                    الوثائق
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/features" className="text-gray-400 hover:text-[#FFD700] transition-all duration-300">
-                    الميزات
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/training" className="text-gray-400 hover:text-[#FFD700] transition-all duration-300">
-                    التدريب
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/chat" className="text-gray-400 hover:text-[#FFD700] transition-all duration-300">
-                    المحادثة
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            <Card className="professional-card hover-lift group">
+              <CardContent className="p-6 text-center">
+                <div className="bg-gradient-to-r from-purple-600 to-blue-600 w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform brand-shadow">
+                  <Brain className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">RAG Systems</h3>
+                <p className="text-gray-400 text-sm mb-4">أنظمة الاسترجاع المعززة</p>
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full w-[90%] animate-glow"></div>
+                </div>
+                <span className="text-xs text-gray-400 mt-2 block">90%</span>
+              </CardContent>
+            </Card>
 
-            <div>
-              <h4 className="text-lg font-semibold text-white mb-4">تواصل معنا</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>📧 openaziz00@gmail.com</li>
-                <li>🌐 krkrai.com</li>
-                <li>📱 +966 123 456 789</li>
-                <li>📍 الرياض، المملكة العربية السعودية</li>
-              </ul>
+            <Card className="professional-card hover-lift group">
+              <CardContent className="p-6 text-center">
+                <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform brand-shadow">
+                  <Cpu className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">Groq API</h3>
+                <p className="text-gray-400 text-sm mb-4">تكامل وتحسين APIs</p>
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full w-[85%] animate-glow"></div>
+                </div>
+                <span className="text-xs text-gray-400 mt-2 block">85%</span>
+              </CardContent>
+            </Card>
+
+            <Card className="professional-card hover-lift group">
+              <CardContent className="p-6 text-center">
+                <div className="bg-gradient-to-r from-cyan-500 to-blue-500 w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform brand-shadow">
+                  <Database className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">Vector DBs</h3>
+                <p className="text-gray-400 text-sm mb-4">قواعد البيانات المتجهة</p>
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-cyan-500 to-blue-500 h-2 rounded-full w-[88%] animate-glow"></div>
+                </div>
+                <span className="text-xs text-gray-400 mt-2 block">88%</span>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Projects Section - محسن */}
+      <section id="projects" className="py-20 relative z-10">
+        <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 glass-effect rounded-full px-4 py-2 text-sm text-gray-300 mb-6 border-blue-500/20">
+              <Rocket className="w-4 h-4 text-blue-400" />
+              <span>المشاريع</span>
             </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6 gradient-text">
+              مشاريعي المبتكرة
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              مجموعة من المشاريع التي تجمع بين الذكاء الاصطناعي والحلول العملية
+            </p>
           </div>
 
-          <div className="border-t border-white/10 pt-8 text-center text-gray-400">
-            <p>© 2024 krkrai WOLF-AI. جميع الحقوق محفوظة.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="professional-card hover-lift group">
+              <CardContent className="p-6">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform brand-shadow">
+                  <BookOpen className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">منصة تعليمية تفاعلية</h3>
+                <p className="text-gray-400 mb-4">
+                  منصة تستخدم الذكاء الاصطناعي لتخصيص تجربة التعلم حسب احتياجات الطالب مع خوارزميات متقدمة لتتبع التقدم
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full text-xs border border-blue-500/30">
+                    Python
+                  </span>
+                  <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full text-xs border border-purple-500/30">
+                    RAG
+                  </span>
+                  <span className="bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded-full text-xs border border-cyan-500/30">
+                    ML
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-blue-400/30 text-white hover:bg-blue-500/10 bg-transparent"
+                  >
+                    <Github className="w-4 h-4 ml-1" />
+                    الكود
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-blue-400/30 text-white hover:bg-blue-500/10 bg-transparent"
+                  >
+                    <ExternalLink className="w-4 h-4 ml-1" />
+                    عرض
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="professional-card hover-lift group">
+              <CardContent className="p-6">
+                <div className="bg-gradient-to-r from-purple-600 to-blue-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform brand-shadow">
+                  <Database className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">نظام قاعدة البيانات المتجهة</h3>
+                <p className="text-gray-400 mb-4">
+                  نظام متقدم لإدارة البيانات المتجهة مع تحسينات للبحث الدلالي والاسترجاع السريع، مُحسَّن للتطبيقات العربية
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full text-xs border border-purple-500/30">
+                    Vector DB
+                  </span>
+                  <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full text-xs border border-blue-500/30">
+                    Embeddings
+                  </span>
+                  <span className="bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded-full text-xs border border-cyan-500/30">
+                    Arabic NLP
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-blue-400/30 text-white hover:bg-blue-500/10 bg-transparent"
+                  >
+                    <Github className="w-4 h-4 ml-1" />
+                    الكود
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-blue-400/30 text-white hover:bg-blue-500/10 bg-transparent"
+                  >
+                    <ExternalLink className="w-4 h-4 ml-1" />
+                    عرض
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="professional-card hover-lift group">
+              <CardContent className="p-6">
+                <div className="bg-gradient-to-r from-cyan-500 to-blue-500 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform brand-shadow">
+                  <MessageSquare className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">مساعد ذكي متعدد اللغات</h3>
+                <p className="text-gray-400 mb-4">
+                  مساعد ذكي يدعم العربية والإنجليزية مع قدرات متقدمة في فهم السياق والرد بطريقة طبيعية
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded-full text-xs border border-cyan-500/30">
+                    Groq API
+                  </span>
+                  <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full text-xs border border-blue-500/30">
+                    NLP
+                  </span>
+                  <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full text-xs border border-purple-500/30">
+                    Multilingual
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-blue-400/30 text-white hover:bg-blue-500/10 bg-transparent"
+                  >
+                    <Github className="w-4 h-4 ml-1" />
+                    الكود
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-blue-400/30 text-white hover:bg-blue-500/10 bg-transparent"
+                  >
+                    <ExternalLink className="w-4 h-4 ml-1" />
+                    تجربة
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* GitHub Stats */}
+          <div className="mt-16 text-center">
+            <Card className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm border-blue-500/30 max-w-2xl mx-auto brand-shadow">
+              <CardContent className="p-8">
+                <div className="grid grid-cols-3 gap-8">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-blue-400 mb-2 flex items-center justify-center gap-2">
+                      <TrendingUp className="w-6 h-6" />
+                      15+
+                    </div>
+                    <div className="text-sm text-gray-400">مشروع نشط</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-yellow-400 mb-2 flex items-center justify-center gap-2">
+                      <Star className="w-6 h-6" />
+                      1.2K+
+                    </div>
+                    <div className="text-sm text-gray-400">نجمة GitHub</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-green-400 mb-2 flex items-center justify-center gap-2">
+                      <Zap className="w-6 h-6" />
+                      500+
+                    </div>
+                    <div className="text-sm text-gray-400">مساهمة</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section - محسن */}
+      <section id="about" className="py-20 relative z-10">
+        <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 glass-effect rounded-full px-4 py-2 text-sm text-gray-300 border-blue-500/20">
+                <Users className="w-4 h-4 text-blue-400" />
+                <span>من أنا</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
+                عبد العزيز الحمداني
+                <br />
+                <span className="text-2xl md:text-3xl gradient-text">مهندس برمجيات من عُمان</span>
+              </h2>
+
+              <div className="space-y-6">
+                <p className="text-lg text-gray-300 leading-relaxed">
+                  أنا عبد العزيز الحمداني من سلطنة عُمان، مهندس برمجيات متخصص في تطوير حلول الذكاء الاصطناعي المتقدمة.
+                  أركز على تطوير أنظمة RAG والتكامل مع Groq API لإنشاء تطبيقات ذكية عالية الأداء.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Card className="professional-card">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3 mb-2">
+                        <Code className="w-5 h-5 text-blue-400" />
+                        <span className="font-semibold text-white">التخصص الرئيسي</span>
+                      </div>
+                      <p className="text-gray-400 text-sm">
+                        تطوير التطبيقات بـ Python مع التركيز على مكتبات الذكاء الاصطناعي
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="professional-card">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3 mb-2">
+                        <Brain className="w-5 h-5 text-purple-400" />
+                        <span className="font-semibold text-white">أنظمة RAG</span>
+                      </div>
+                      <p className="text-gray-400 text-sm">
+                        تطوير حلول Retrieval-Augmented Generation للتطبيقات الذكية
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="professional-card">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3 mb-2">
+                        <Cpu className="w-5 h-5 text-cyan-400" />
+                        <span className="font-semibold text-white">تكامل APIs</span>
+                      </div>
+                      <p className="text-gray-400 text-sm">خبرة في استخدام وتحسين Groq API وواجهات الذكاء الاصطناعي</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="professional-card">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3 mb-2">
+                        <Globe className="w-5 h-5 text-green-400" />
+                        <span className="font-semibold text-white">الحلول المبتكرة</span>
+                      </div>
+                      <p className="text-gray-400 text-sm">تطوير حلول تجمع بين التقنيات الحديثة والاحتياجات العملية</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <p className="text-lg text-gray-300 leading-relaxed">
+                  هدفي هو إنشاء منتجات تساعد الناس وتجعل حياتهم أسهل وأكثر إنتاجية. أؤمن بأن الذكاء الاصطناعي يجب أن
+                  يكون في متناول الجميع، وأعمل على تطوير حلول تدعم اللغة العربية وتخدم المجتمع العربي.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 rounded-full px-6 py-3 font-medium brand-shadow"
+                  asChild
+                >
+                  <Link href="#contact">
+                    <Mail className="size-4 ml-2" />
+                    تواصل معي
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-blue-400/30 text-white hover:bg-blue-500/10 hover:border-blue-400/50 rounded-full px-6 py-3 transition-all duration-300 bg-transparent backdrop-blur-sm"
+                  asChild
+                >
+                  <Link href="https://github.com/wolfomani">
+                    <Github className="size-4 ml-2" />
+                    GitHub Profile
+                  </Link>
+                </Button>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="relative group">
+                <Image
+                  alt="عبد العزيز الحمداني في بيئة العمل"
+                  width={500}
+                  height={500}
+                  className="w-full rounded-2xl shadow-2xl group-hover:scale-105 transition-transform duration-300 border border-blue-500/20"
+                  src="/images/anime1.jpg"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-2xl" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="glass-effect rounded-lg p-4 border-blue-500/30">
+                    <div className="text-white font-semibold flex items-center gap-2">
+                      <Shield className="w-4 h-4 text-green-400" />
+                      مطور من سلطنة عُمان
+                    </div>
+                    <div className="text-gray-300 text-sm">متخصص في الذكاء الاصطناعي والبرمجة</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section - محسن */}
+      <section id="contact" className="py-20 relative z-10">
+        <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 glass-effect rounded-full px-4 py-2 text-sm text-gray-300 mb-6 border-blue-500/20">
+              <Mail className="w-4 h-4 text-blue-400" />
+              <span>تواصل معي</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6 gradient-text">
+              دعنا نتعاون
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              هل لديك مشروع مثير أو فكرة تريد تطويرها؟ أنا متاح للتعاون في مشاريع الذكاء الاصطناعي المبتكرة
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 gap-6">
+                <Card className="professional-card hover-lift">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="bg-gradient-to-r from-blue-600 to-purple-600 w-12 h-12 rounded-lg flex items-center justify-center brand-shadow">
+                        <Mail className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-white mb-1">البريد الإلكتروني</h3>
+                        <p className="text-gray-400">openaziz00@gmail.com</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="professional-card hover-lift">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="bg-gradient-to-r from-purple-600 to-blue-600 w-12 h-12 rounded-lg flex items-center justify-center brand-shadow">
+                        <MessageSquare className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-white mb-1">Telegram</h3>
+                        <p className="text-gray-400">@wolfaiOM</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="professional-card hover-lift">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="bg-gradient-to-r from-cyan-500 to-blue-500 w-12 h-12 rounded-lg flex items-center justify-center brand-shadow">
+                        <Github className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-white mb-1">GitHub</h3>
+                        <p className="text-gray-400">wolfomani</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 rounded-full px-6 py-3 font-medium flex-1 brand-shadow"
+                  asChild
+                >
+                  <Link href="mailto:openaziz00@gmail.com">
+                    <Mail className="size-4 ml-2" />
+                    راسلني الآن
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-blue-400/30 text-white hover:bg-blue-500/10 hover:border-blue-400/50 rounded-full px-6 py-3 transition-all duration-300 bg-transparent backdrop-blur-sm flex-1"
+                  asChild
+                >
+                  <Link href="https://t.me/wolfaiOM">
+                    <MessageSquare className="size-4 ml-2" />
+                    Telegram
+                  </Link>
+                </Button>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="relative group">
+                <Image
+                  alt="تواصل مع عبد العزيز الحمداني"
+                  width={400}
+                  height={400}
+                  className="w-full rounded-2xl shadow-2xl group-hover:scale-105 transition-transform duration-300 border border-blue-500/20"
+                  src="/images/anime2.jpg"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-2xl" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="glass-effect rounded-lg p-4 border-blue-500/30">
+                    <div className="text-white font-semibold flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-yellow-400" />
+                      متاح للتعاون
+                    </div>
+                    <div className="text-gray-300 text-sm">مشاريع الذكاء الاصطناعي والتطوير</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer - محسن */}
+      <footer className="relative w-full overflow-hidden border-t border-blue-500/20 bg-slate-900/50 backdrop-blur-sm">
+        <div className="py-16">
+          <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="relative w-8 h-8">
+                    <Image src="/images/logo.png" alt="Logo" width={32} height={32} className="object-contain" />
+                  </div>
+                  <div className="text-2xl font-bold gradient-text">عبد العزيز الحمداني</div>
+                </div>
+                <p className="text-gray-400 text-sm">
+                  مهندس برمجيات متخصص في الذكاء الاصطناعي من سلطنة عُمان. أطور حلول RAG المتقدمة وأعمل مع Groq API
+                </p>
+                <div className="flex gap-3">
+                  <Link
+                    href="https://github.com/wolfomani"
+                    className="glass-effect rounded-full p-2 hover:bg-blue-500/20 transition-all duration-300 border-blue-500/30"
+                    aria-label="GitHub"
+                  >
+                    <Github className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    href="https://t.me/wolfaiOM"
+                    className="glass-effect rounded-full p-2 hover:bg-blue-500/20 transition-all duration-300 border-blue-500/30"
+                    aria-label="Telegram"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    href="mailto:openaziz00@gmail.com"
+                    className="glass-effect rounded-full p-2 hover:bg-blue-500/20 transition-all duration-300 border-blue-500/30"
+                    aria-label="Email"
+                  >
+                    <Mail className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-white">المهارات</h3>
+                <ul className="space-y-2 text-sm text-gray-400">
+                  <li>
+                    <Link href="#skills" className="hover:text-blue-400 transition-colors">
+                      Python Development
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#skills" className="hover:text-blue-400 transition-colors">
+                      RAG Systems
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#skills" className="hover:text-blue-400 transition-colors">
+                      Groq API
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#skills" className="hover:text-blue-400 transition-colors">
+                      Vector Databases
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-white">المشاريع</h3>
+                <ul className="space-y-2 text-sm text-gray-400">
+                  <li>
+                    <Link href="#projects" className="hover:text-blue-400 transition-colors">
+                      منصة تعليمية تفاعلية
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#projects" className="hover:text-blue-400 transition-colors">
+                      نظام قاعدة البيانات المتجهة
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#projects" className="hover:text-blue-400 transition-colors">
+                      مساعد ذكي متعدد اللغات
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/chat" className="hover:text-blue-400 transition-colors">
+                      تجربة المحادثة
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-white">التواصل</h3>
+                <ul className="space-y-2 text-sm text-gray-400">
+                  <li>
+                    <Link href="mailto:openaziz00@gmail.com" className="hover:text-blue-400 transition-colors">
+                      openaziz00@gmail.com
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="https://t.me/wolfaiOM" className="hover:text-blue-400 transition-colors">
+                      @wolfaiOM
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="https://github.com/wolfomani" className="hover:text-blue-400 transition-colors">
+                      GitHub Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <span className="text-gray-500">سلطنة عُمان</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="border-t border-blue-500/20 pt-8">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <p className="text-gray-400 text-sm">© 2024 عبد العزيز الحمداني. جميع الحقوق محفوظة.</p>
+                <div className="flex items-center gap-4 text-sm text-gray-400">
+                  <span>صُنع بـ ❤️ في سلطنة عُمان</span>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span>متاح للعمل</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </footer>

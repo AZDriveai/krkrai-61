@@ -1,11 +1,12 @@
 import type { Config } from "tailwindcss"
 
-const config: Config = {
+const config = {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
   prefix: "",
@@ -52,45 +53,26 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        cosmic: {
-          dark: "#0A0A19",
-          white: "#FFFFFF",
-          blue: "#0066FF",
-          "light-blue": "#E6F0FF",
-          "light-gray": "#F1F5F9",
-          "medium-gray": "#94A3B8",
-          success: "#10B981",
-          warning: "#EF4444",
+        // Sidebar colors
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: {
+            DEFAULT: "hsl(var(--sidebar-primary))",
+            foreground: "hsl(var(--sidebar-primary-foreground))",
+          },
+          accent: {
+            DEFAULT: "hsl(var(--sidebar-accent))",
+            foreground: "hsl(var(--sidebar-accent-foreground))",
+          },
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
         },
-      },
-      backgroundImage: {
-        "gradient-blue": "linear-gradient(90deg, #0066FF 0%, #00CCFF 100%)",
-        "gradient-gray": "linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%)",
-        "gradient-cosmic": "linear-gradient(120deg, #0A0A19 0%, #1E293B 100%)",
-      },
-      boxShadow: {
-        soft: "0px 4px 24px rgba(0, 0, 0, 0.08)",
-        glass: "0px 8px 32px rgba(0, 102, 255, 0.15)",
-        deep: "0px 40px 80px rgba(0, 102, 255, 0.2)",
-        neumorphism: "20px 20px 60px #0a0a19, -20px -20px 60px #1a1a29",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        base: "16px",
-        large: "24px",
-      },
-      fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
-        inter: ["var(--font-inter)", "sans-serif"],
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        float: "float 6s ease-in-out infinite",
-        "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        gradient: "gradient 15s ease infinite",
       },
       keyframes: {
         "accordion-down": {
@@ -101,18 +83,32 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        float: {
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 20px rgba(255, 77, 0, 0.3)" },
+          "50%": { boxShadow: "0 0 30px rgba(255, 77, 0, 0.6)" },
+        },
+        floating: {
           "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-20px)" },
+          "50%": { transform: "translateY(-10px)" },
         },
-        gradient: {
-          "0%, 100%": { backgroundPosition: "0% 50%" },
-          "50%": { backgroundPosition: "100% 50%" },
-        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite alternate",
+        floating: "floating 3s ease-in-out infinite",
+      },
+      backgroundImage: {
+        "gradient-bg": "linear-gradient(135deg, #1a1a1a 0%, #2d1b69 50%, #ff4d00 100%)",
+        "gradient-text-orange": "linear-gradient(135deg, #ff4d00, #ff8a00, #ff0040)",
+        "btn-gradient": "linear-gradient(135deg, #ff4d00, #ff8a00)",
+        "chat-bubble-user": "linear-gradient(135deg, #ff4d00, #ff8a00)",
+        "chat-bubble-ai": "linear-gradient(135deg, #2d1b69, #4c1d95)",
+        "section-bg": "linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2d1b69 100%)",
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+} satisfies Config
 
 export default config
