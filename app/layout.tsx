@@ -3,6 +3,11 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { cn } from "@/lib/utils"
+import { CosmicParticles } from "@/components/cosmic-particles"
+import { PerformanceMonitor } from "@/components/performance-monitor"
+import { ErrorBoundary } from "@/components/error-boundary"
+import { FontOptimizer } from "@/components/font-optimizer"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -199,10 +204,19 @@ export default function RootLayout({
         <link rel="preload" href="/images/profile-photo.jpg" as="image" />
         <link rel="prefetch" href="/chat" />
       </head>
-      <body className={inter.className} suppressHydrationWarning>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
+      <body
+        className={cn(inter.className, "min-h-screen bg-background font-sans antialiased")}
+        suppressHydrationWarning
+      >
+        <ErrorBoundary>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+            <FontOptimizer>
+              <CosmicParticles />
+              {children}
+              <PerformanceMonitor />
+            </FontOptimizer>
+          </ThemeProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )

@@ -4,10 +4,6 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import {
   Brain,
@@ -43,7 +39,7 @@ interface APIKey {
   maxRequests: number
 }
 
-export default function Dashboard() {
+export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("overview")
   const [isAssistantOpen, setIsAssistantOpen] = useState(false)
   const [apiKeys, setApiKeys] = useState<APIKey[]>([
@@ -285,118 +281,10 @@ export default function Dashboard() {
                     <p className="text-gray-300 text-lg">إدارة مفاتيح الوصول لواجهة برمجة التطبيقات الخاصة بك</p>
                   </div>
 
-                  <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-                    <DialogTrigger asChild>
-                      <Button className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-black hover:shadow-lg hover:shadow-yellow-500/25 smooth-transition hover:scale-105 flex items-center gap-3 px-6 py-3 text-lg">
-                        <Plus className="w-5 h-5" />
-                        إنشاء مفتاح جديد
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-black/90 border-[#FFD700]/30 text-white max-w-3xl backdrop-blur-md">
-                      <DialogHeader>
-                        <DialogTitle className="text-[#FFD700] text-2xl font-bold">إنشاء مفتاح API جديد</DialogTitle>
-                      </DialogHeader>
-
-                      <div className="space-y-8">
-                        <div>
-                          <Label htmlFor="keyName" className="text-white mb-3 block font-semibold">
-                            اسم المفتاح
-                          </Label>
-                          <Input
-                            id="keyName"
-                            value={newKeyName}
-                            onChange={(e) => setNewKeyName(e.target.value)}
-                            placeholder="مثال: مشروع تطبيق الجوال"
-                            className="bg-white/10 border-white/30 text-white focus:border-[#FFD700] rounded-base"
-                          />
-                        </div>
-
-                        {/* اختيار المستوى */}
-                        <div>
-                          <Label className="text-white mb-4 block font-semibold">اختر المستوى</Label>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {Object.entries(tierConfig).map(([tier, config]) => {
-                              const IconComponent = config.icon
-                              return (
-                                <div
-                                  key={tier}
-                                  onClick={() => setSelectedTier(tier as any)}
-                                  className={`p-4 rounded-base border-2 cursor-pointer smooth-transition hover:scale-105 ${
-                                    selectedTier === tier
-                                      ? `${config.borderColor} bg-white/20`
-                                      : "border-white/30 bg-white/10 hover:border-white/50"
-                                  }`}
-                                >
-                                  <div className="flex items-center gap-3 mb-2">
-                                    <div
-                                      className={`w-8 h-8 ${config.color} rounded-full flex items-center justify-center`}
-                                    >
-                                      <IconComponent className="w-4 h-4 text-white" />
-                                    </div>
-                                    <span className="font-semibold text-white">{config.name}</span>
-                                  </div>
-                                  <div className="text-sm text-gray-300 mb-1">
-                                    {config.maxRequests === Number.POSITIVE_INFINITY
-                                      ? "طلبات لا محدودة"
-                                      : `${config.maxRequests} طلب/شهر`}
-                                  </div>
-                                  <div className={`text-sm font-semibold ${config.textColor}`}>{config.price}</div>
-                                </div>
-                              )
-                            })}
-                          </div>
-                        </div>
-
-                        <div>
-                          <Label className="text-white mb-4 block font-semibold">الصلاحيات</Label>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {availablePermissions.map((permission) => (
-                              <div
-                                key={permission.id}
-                                className="flex items-start space-x-3 space-x-reverse p-3 bg-white/10 rounded-base border border-white/20"
-                              >
-                                <Checkbox
-                                  id={permission.id}
-                                  checked={selectedPermissions.includes(permission.id)}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      setSelectedPermissions([...selectedPermissions, permission.id])
-                                    } else {
-                                      setSelectedPermissions(selectedPermissions.filter((p) => p !== permission.id))
-                                    }
-                                  }}
-                                  className="border-[#FFD700] data-[state=checked]:bg-[#FFD700] data-[state=checked]:border-[#FFD700]"
-                                />
-                                <div className="flex-1">
-                                  <Label htmlFor={permission.id} className="text-white font-semibold cursor-pointer">
-                                    {permission.label}
-                                  </Label>
-                                  <p className="text-sm text-gray-300 mt-1">{permission.description}</p>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="flex justify-end gap-4">
-                          <Button
-                            variant="outline"
-                            onClick={() => setIsCreateModalOpen(false)}
-                            className="border-gray-500 text-gray-300 hover:bg-gray-500/10"
-                          >
-                            إلغاء
-                          </Button>
-                          <Button
-                            onClick={handleCreateKey}
-                            disabled={!newKeyName.trim() || selectedPermissions.length === 0}
-                            className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-black hover:shadow-lg hover:shadow-yellow-500/25 smooth-transition"
-                          >
-                            إنشاء المفتاح
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                  <Button className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-black hover:shadow-lg hover:shadow-yellow-500/25 smooth-transition hover:scale-105 flex items-center gap-3 px-6 py-3 text-lg">
+                    <Plus className="w-5 h-5" />
+                    إنشاء مفتاح جديد
+                  </Button>
                 </div>
 
                 {/* البحث */}
@@ -419,129 +307,98 @@ export default function Dashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow className="border-white/20 hover:bg-white/5">
-                            <TableHead className="text-[#FFD700] font-semibold">الاسم</TableHead>
-                            <TableHead className="text-[#FFD700] font-semibold">المستوى</TableHead>
-                            <TableHead className="text-[#FFD700] font-semibold">المفتاح</TableHead>
-                            <TableHead className="text-[#FFD700] font-semibold">الاستخدام</TableHead>
-                            <TableHead className="text-[#FFD700] font-semibold">الصلاحيات</TableHead>
-                            <TableHead className="text-[#FFD700] font-semibold">تاريخ الإنشاء</TableHead>
-                            <TableHead className="text-[#FFD700] font-semibold">آخر استخدام</TableHead>
-                            <TableHead className="text-[#FFD700] font-semibold">الحالة</TableHead>
-                            <TableHead className="text-[#FFD700] font-semibold">الإجراءات</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {filteredKeys.map((apiKey) => {
-                            const tierInfo = tierConfig[apiKey.tier]
-                            const IconComponent = tierInfo.icon
-                            const usagePercentage = (apiKey.requests / apiKey.maxRequests) * 100
+                      <div className="space-y-8">
+                        {filteredKeys.map((apiKey) => {
+                          const tierInfo = tierConfig[apiKey.tier]
+                          const IconComponent = tierInfo.icon
+                          const usagePercentage = (apiKey.requests / apiKey.maxRequests) * 100
 
-                            return (
-                              <TableRow key={apiKey.id} className="border-white/20 hover:bg-white/5 smooth-transition">
-                                <TableCell className="font-semibold text-white">{apiKey.name}</TableCell>
-                                <TableCell>
-                                  <div className="flex items-center gap-2">
-                                    <div
-                                      className={`w-6 h-6 ${tierInfo.color} rounded-full flex items-center justify-center`}
-                                    >
-                                      <IconComponent className="w-3 h-3 text-white" />
-                                    </div>
-                                    <span className={`font-medium ${tierInfo.textColor}`}>{tierInfo.name}</span>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex items-center gap-2">
-                                    <code className="bg-white/10 px-3 py-1 rounded-base text-sm text-[#FFD700] font-mono">
-                                      {showKeys[apiKey.id] ? apiKey.key : `${"*".repeat(20)}${apiKey.key.slice(-4)}`}
-                                    </code>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => toggleKeyVisibility(apiKey.id)}
-                                      className="text-gray-400 hover:text-white p-1"
-                                    >
-                                      {showKeys[apiKey.id] ? (
-                                        <EyeOff className="w-4 h-4" />
-                                      ) : (
-                                        <Eye className="w-4 h-4" />
-                                      )}
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="space-y-1">
-                                    <div className="flex justify-between text-sm">
-                                      <span>{apiKey.requests}</span>
-                                      <span>{apiKey.maxRequests === 999999 ? "∞" : apiKey.maxRequests}</span>
-                                    </div>
-                                    <div className="w-full bg-white/20 rounded-full h-2">
-                                      <div
-                                        className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] h-2 rounded-full transition-all duration-300"
-                                        style={{ width: `${Math.min(usagePercentage, 100)}%` }}
-                                      ></div>
-                                    </div>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex flex-wrap gap-1">
-                                    {apiKey.permissions.map((permission, index) => (
-                                      <Badge
-                                        key={index}
-                                        variant="secondary"
-                                        className="bg-[#FFD700]/20 text-[#FFD700] border-[#FFD700]/30 text-xs"
-                                      >
-                                        {permission}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                </TableCell>
-                                <TableCell className="text-gray-300">
-                                  <div className="flex items-center gap-1">
-                                    <Calendar className="w-4 h-4" />
-                                    {apiKey.createdAt}
-                                  </div>
-                                </TableCell>
-                                <TableCell className="text-gray-300">{apiKey.lastUsed}</TableCell>
-                                <TableCell>
+                          return (
+                            <div
+                              key={apiKey.id}
+                              className="flex items-center gap-3 space-x-reverse p-3 bg-white/10 rounded-base border border-white/20"
+                            >
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className={`w-6 h-6 ${tierInfo.color} rounded-full flex items-center justify-center`}
+                                >
+                                  <IconComponent className="w-3 h-3 text-white" />
+                                </div>
+                                <span className={`font-medium ${tierInfo.textColor}`}>{tierInfo.name}</span>
+                              </div>
+                              <code className="bg-white/10 px-3 py-1 rounded-base text-sm text-[#FFD700] font-mono">
+                                {showKeys[apiKey.id] ? apiKey.key : `${"*".repeat(20)}${apiKey.key.slice(-4)}`}
+                              </code>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => toggleKeyVisibility(apiKey.id)}
+                                  className="text-gray-400 hover:text-white p-1"
+                                >
+                                  {showKeys[apiKey.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </Button>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-sm">
+                                  <span>{apiKey.requests}</span>
+                                  <span>{apiKey.maxRequests === 999999 ? "∞" : apiKey.maxRequests}</span>
+                                </div>
+                                <div className="w-full bg-white/20 rounded-full h-2">
+                                  <div
+                                    className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] h-2 rounded-full transition-all duration-300"
+                                    style={{ width: `${Math.min(usagePercentage, 100)}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {apiKey.permissions.map((permission, index) => (
                                   <Badge
-                                    variant={apiKey.status === "active" ? "default" : "secondary"}
-                                    className={
-                                      apiKey.status === "active"
-                                        ? "bg-green-500/20 text-green-400 border-green-500/30"
-                                        : "bg-gray-500/20 text-gray-400 border-gray-500/30"
-                                    }
+                                    key={index}
+                                    variant="secondary"
+                                    className="bg-[#FFD700]/20 text-[#FFD700] border-[#FFD700]/30 text-xs"
                                   >
-                                    {apiKey.status === "active" ? "نشط" : "غير نشط"}
+                                    {permission}
                                   </Badge>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex items-center gap-2">
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => copyToClipboard(apiKey.key)}
-                                      className="text-gray-400 hover:text-[#FFD700] p-1 hover:bg-[#FFD700]/10"
-                                    >
-                                      <Copy className="w-4 h-4" />
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => deleteKey(apiKey.id)}
-                                      className="text-gray-400 hover:text-red-400 p-1 hover:bg-red-400/10"
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            )
-                          })}
-                        </TableBody>
-                      </Table>
+                                ))}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Calendar className="w-4 h-4" />
+                                {apiKey.createdAt}
+                              </div>
+                              {apiKey.lastUsed}
+                              <Badge
+                                variant={apiKey.status === "active" ? "default" : "secondary"}
+                                className={
+                                  apiKey.status === "active"
+                                    ? "bg-green-500/20 text-green-400 border-green-500/30"
+                                    : "bg-gray-500/20 text-gray-400 border-gray-500/30"
+                                }
+                              >
+                                {apiKey.status === "active" ? "نشط" : "غير نشط"}
+                              </Badge>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => copyToClipboard(apiKey.key)}
+                                  className="text-gray-400 hover:text-[#FFD700] p-1 hover:bg-[#FFD700]/10"
+                                >
+                                  <Copy className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => deleteKey(apiKey.id)}
+                                  className="text-gray-400 hover:text-red-400 p-1 hover:bg-red-400/10"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
                     </div>
 
                     {filteredKeys.length === 0 && (

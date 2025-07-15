@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Settings, User, Newspaper, ChevronDown, Paperclip, Send, Search, ChevronDownIcon } from "lucide-react"
+import { AIAssistant } from "@/components/ai-assistant"
 
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -295,6 +296,7 @@ export default function ChatPage() {
               </div>
             </div>
           </main>
+          <AIAssistant />
         </div>
       </div>
     </div>

@@ -1,99 +1,132 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { cn } from "@/lib/utils"
 
 interface PerformanceMetrics {
-  fcp?: number // First Contentful Paint
-  lcp?: number // Largest Contentful Paint
-  fid?: number // First Input Delay
-  cls?: number // Cumulative Layout Shift
-  ttfb?: number // Time to First Byte
+  fps: number | null
+  memoryUsage: number | null // in MB
+  cpuUsage: number | null // percentage
+  networkLatency: number | null // in ms
 }
 
-export default function PerformanceMonitor() {
+export function PerformanceMonitor() {
+  const [metrics, setMetrics] = useState<PerformanceMetrics>({
+    fps: null,
+    memoryUsage: null,
+    cpuUsage: null,
+    networkLatency: null,
+  })
+  const [isVisible, setIsVisible] = useState(false)
+
   useEffect(() => {
-    if (typeof window === "undefined") return
+    let animationFrameId: number
+    let lastFrameTime = performance.now()
 
-    const metrics: PerformanceMetrics = {}
+    const updateMetrics = () => {
+      // Simulate FPS
+      const now = performance.now()
+      const delta = now - lastFrameTime
+      const currentFps = 1000 / delta
+      lastFrameTime = now
 
-    // قياس First Contentful Paint
-    const observer = new PerformanceObserver((list) => {
-      for (const entry of list.getEntries()) {
-        if (entry.name === "first-contentful-paint") {
-          metrics.fcp = entry.startTime
-        }
-      }
-    })
-    observer.observe({ entryTypes: ["paint"] })
+      // Simulate Memory Usage (client-side only, rough estimate)
+      // In a real app, you'd get this from a more reliable source or server-side
+      const simulatedMemory = Math.random() * 100 + 50 // 50-150 MB
 
-    // قياس Largest Contentful Paint
-    const lcpObserver = new PerformanceObserver((list) => {
-      const entries = list.getEntries()
-      const lastEntry = entries[entries.length - 1]
-      metrics.lcp = lastEntry.startTime
-    })
-    lcpObserver.observe({ entryTypes: ["largest-contentful-paint"] })
+      // Simulate CPU Usage (client-side only, rough estimate)
+      const simulatedCpu = Math.random() * 30 + 10 // 10-40%
 
-    // قياس First Input Delay
-    const fidObserver = new PerformanceObserver((list) => {
-      for (const entry of list.getEntries()) {
-        metrics.fid = (entry as any).processingStart - entry.startTime
-      }
-    })
-    fidObserver.observe({ entryTypes: ["first-input"] })
+      // Simulate Network Latency
+      const simulatedLatency = Math.random() * 100 + 20 // 20-120 ms
 
-    // قياس Cumulative Layout Shift
-    let clsValue = 0
-    const clsObserver = new PerformanceObserver((list) => {
-      for (const entry of list.getEntries()) {
-        if (!(entry as any).hadRecentInput) {
-          clsValue += (entry as any).value
-        }
-      }
-      metrics.cls = clsValue
-    })
-    clsObserver.observe({ entryTypes: ["layout-shift"] })
-
-    // إرسال المقاييس بعد تحميل الصفحة
-    const sendMetrics = () => {
-      const navigation = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming
-      if (navigation) {
-        metrics.ttfb = navigation.responseStart - navigation.requestStart
-      }
-
-      // تسجيل المقاييس (يمكن إرسالها لخدمة تحليلات)
-      console.log("🚀 WOLF-AI Performance Metrics:", {
-        ...metrics,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        connection: (navigator as any).connection?.effectiveType,
-        url: window.location.href,
+      setMetrics({
+        fps: Math.round(currentFps),
+        memoryUsage: Number.parseFloat(simulatedMemory.toFixed(2)),
+        cpuUsage: Number.parseFloat(simulatedCpu.toFixed(2)),
+        networkLatency: Number.parseFloat(simulatedLatency.toFixed(2)),
       })
 
-      // يمكن إرسال البيانات لخدمة مراقبة مثل Vercel Analytics
-      if (process.env.NODE_ENV === "production") {
-        // fetch('/api/analytics/performance', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(metrics)
-        // })
-      }
+      animationFrameId = requestAnimationFrame(updateMetrics)
     }
 
-    // إرسال المقاييس عند اكتمال التحميل
-    if (document.readyState === "complete") {
-      setTimeout(sendMetrics, 1000)
-    } else {
-      window.addEventListener("load", () => setTimeout(sendMetrics, 1000))
-    }
+    animationFrameId = requestAnimationFrame(updateMetrics)
+
+    // Optional: Send metrics to API periodically
+    const intervalId = setInterval(() => {
+      if (metrics.fps !== null) {
+        fetch("/api/analytics/performance", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(metrics),
+        }).catch(console.error)
+      }
+    }, 5000) // Send every 5 seconds
 
     return () => {
-      observer.disconnect()
-      lcpObserver.disconnect()
-      fidObserver.disconnect()
-      clsObserver.disconnect()
+      cancelAnimationFrame(animationFrameId)
+      clearInterval(intervalId)
     }
-  }, [])
+  }, [metrics]) // Dependency on metrics to ensure latest state is sent
 
-  return null // هذا المكون لا يعرض شيئاً
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible)
+  }
+
+  return (
+    <div className="fixed bottom-4 right-4 z-50">
+      <button
+        onClick={toggleVisibility}
+        className="bg-primary text-primary-foreground rounded-full p-2 shadow-lg hover:bg-primary/90 transition-colors"
+        aria-label="Toggle performance monitor"
+      >
+        {isVisible ? "Hide Perf" : "Show Perf"}
+      </button>
+
+      {isVisible && (
+        <Card className="mt-2 w-64 shadow-lg">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Performance Metrics</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm space-y-2">
+            <div className="flex justify-between items-center">
+              <span>FPS:</span>
+              <span className={cn(metrics.fps && metrics.fps < 30 ? "text-destructive" : "text-primary")}>
+                {metrics.fps !== null ? metrics.fps : "N/A"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span>Memory:</span>
+              <span
+                className={cn(metrics.memoryUsage && metrics.memoryUsage > 100 ? "text-destructive" : "text-primary")}
+              >
+                {metrics.memoryUsage !== null ? `${metrics.memoryUsage} MB` : "N/A"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span>CPU:</span>
+              <span className={cn(metrics.cpuUsage && metrics.cpuUsage > 20 ? "text-destructive" : "text-primary")}>
+                {metrics.cpuUsage !== null ? `${metrics.cpuUsage}%` : "N/A"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span>Latency:</span>
+              <span
+                className={cn(
+                  metrics.networkLatency && metrics.networkLatency > 80 ? "text-destructive" : "text-primary",
+                )}
+              >
+                {metrics.networkLatency !== null ? `${metrics.networkLatency} ms` : "N/A"}
+              </span>
+            </div>
+            <Progress value={metrics.cpuUsage || 0} className="w-full mt-2" />
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  )
 }

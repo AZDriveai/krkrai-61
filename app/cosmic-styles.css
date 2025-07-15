@@ -226,6 +226,63 @@
   }
 }
 
+/* Cosmic Particles Styles */
+.cosmic-particles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.cosmic-particle {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: floatAndFade 15s infinite ease-in-out;
+}
+
+@keyframes floatAndFade {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(-50vh) translateX(20vw) scale(1.2);
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(40vw) scale(0.8);
+    opacity: 0;
+  }
+}
+
+.cosmic-particle:nth-child(2n) {
+  background-color: rgba(107, 70, 193, 0.7); /* Cosmic Purple */
+  animation-duration: 18s;
+  animation-delay: 2s;
+}
+
+.cosmic-particle:nth-child(3n) {
+  background-color: rgba(0, 245, 160, 0.6); /* KRKR Green */
+  animation-duration: 12s;
+  animation-delay: 4s;
+}
+
+.cosmic-particle:nth-child(4n) {
+  background-color: rgba(255, 215, 0, 0.7); /* Wolf Gold */
+  animation-duration: 20s;
+  animation-delay: 1s;
+}
+
 /* تحسينات الاستجابة */
 @media (max-width: 768px) {
   .quantum-button:hover {

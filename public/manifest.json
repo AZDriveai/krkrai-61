@@ -1,11 +1,11 @@
 {
-  "name": "krkrai WOLF-AI - منصة الذكاء الاصطناعي المتقدمة",
-  "short_name": "WOLF-AI",
+  "name": "Krkrai Dashboard",
+  "short_name": "Krkrai",
   "description": "منصة الذكاء الاصطناعي المتقدمة للبحث والتحليل والبرمجة والإبداع المرئي",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a19",
-  "theme_color": "#ffd700",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "ar",
@@ -13,16 +13,14 @@
   "categories": ["productivity", "education", "developer"],
   "icons": [
     {
-      "src": "/icon-192x192.png",
+      "src": "/dr-x-logo.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "type": "image/png"
     },
     {
-      "src": "/icon-512x512.png",
+      "src": "/dr-x-logo.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "type": "image/png"
     }
   ],
   "shortcuts": [

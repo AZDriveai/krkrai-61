@@ -10,7 +10,7 @@ async function testAIModels() {
   console.log("Starting AI Model Tests...\n")
 
   // Test Google Gemini
-  if (process.env.GEMINI_API_KEY) {
+  if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
     try {
       console.log("Testing Google Gemini (gemini-pro)...")
       const { text } = await generateText({
@@ -22,7 +22,7 @@ async function testAIModels() {
       console.error("Error testing Google Gemini:", error.message)
     }
   } else {
-    console.warn("GEMINI_API_KEY not found. Skipping Google Gemini test.")
+    console.warn("GOOGLE_GENERATIVE_AI_API_KEY not found. Skipping Google Gemini test.")
   }
 
   // Test DeepSeek
