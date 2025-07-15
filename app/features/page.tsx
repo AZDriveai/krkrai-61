@@ -2,21 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  Brain,
-  Search,
-  BarChart3,
-  Code,
-  ImageIcon,
-  ArrowRight,
-  Play,
-  Pause,
-  Database,
-  Gem,
-  Shield,
-  TrendingUp,
-} from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Brain, Search, BarChart3, Code, ImageIcon, ArrowRight, Play, Pause } from "lucide-react"
 import Link from "next/link"
 
 export default function FeaturesPage() {
@@ -125,48 +112,6 @@ export default function FeaturesPage() {
           "تم إنشاء صورة مذهلة تجمع بين العمارة المستقبلية والتكنولوجيا المتقدمة، مع إضاءة ديناميكية وتفاصيل معمارية مبتكرة...",
       },
     },
-    {
-      id: "ai-integration",
-      icon: Brain,
-      title: "Advanced AI Integration",
-      description:
-        "Seamlessly integrate with leading AI models like Anthropic, Groq, xAI, DeepSeek, and Google Gemini for diverse AI capabilities.",
-    },
-    {
-      id: "data-management",
-      icon: Database,
-      title: "Robust Data Management",
-      description:
-        "Utilize Supabase for secure and scalable data storage, enabling efficient management of training data, models, and user information.",
-    },
-    {
-      id: "custom-training",
-      icon: Code,
-      title: "Custom AI Training (Wolf AI)",
-      description:
-        "Train and fine-tune your own AI models with the powerful Wolf AI Trainer, designed for high performance and customizability.",
-    },
-    {
-      id: "secure-keys",
-      icon: Shield,
-      title: "Secure API Key System (KRKR)",
-      description:
-        "Generate and manage encrypted API keys with tiered permissions, ensuring secure and controlled access to your AI services.",
-    },
-    {
-      id: "analytics",
-      icon: TrendingUp,
-      title: "Comprehensive Analytics",
-      description:
-        "Gain deep insights into user behavior and application performance with integrated analytics and monitoring tools.",
-    },
-    {
-      id: "user-interface",
-      icon: Gem,
-      title: "Intuitive User Interface",
-      description:
-        "Experience a modern, responsive, and user-friendly dashboard built with Next.js and shadcn/ui for optimal interaction.",
-    },
   ]
 
   const toggleDemo = (featureId: string) => {
@@ -194,10 +139,7 @@ export default function FeaturesPage() {
               <Link href="/chat" className="text-[#EAEAEA] hover:text-[#00F5A0] transition-colors">
                 المحادثة
               </Link>
-              <Button
-                variant="outline"
-                className="border-[#00F5A0] text-[#00F5A0] hover:bg-[#00F5A0]/10 bg-transparent"
-              >
+              <Button variant="outline" className="border-[#00F5A0] text-[#00F5A0] hover:bg-[#00F5A0]/10">
                 تسجيل الدخول
               </Button>
             </div>
@@ -250,48 +192,44 @@ export default function FeaturesPage() {
                   </div>
                   <div>
                     <h2 className="text-3xl md:text-4xl font-bold text-[#00F5A0] mb-2">{feature.title}</h2>
-                    {feature.subtitle && <p className="text-lg text-[#B0B0B0]">{feature.subtitle}</p>}
+                    <p className="text-lg text-[#B0B0B0]">{feature.subtitle}</p>
                   </div>
                 </div>
 
                 <p className="text-lg text-[#EAEAEA] mb-8 leading-relaxed">{feature.description}</p>
 
-                {feature.capabilities && (
-                  <div className="space-y-4 mb-8">
-                    {feature.capabilities.map((capability, capIndex) => (
-                      <div key={capIndex} className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-[#00F5A0] rounded-full mt-2 flex-shrink-0"></div>
-                        <p className="text-[#B0B0B0]">{capability}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="space-y-4 mb-8">
+                  {feature.capabilities.map((capability, capIndex) => (
+                    <div key={capIndex} className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-[#00F5A0] rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-[#B0B0B0]">{capability}</p>
+                    </div>
+                  ))}
+                </div>
 
-                {feature.demo && (
-                  <Button
-                    onClick={() => toggleDemo(feature.id)}
-                    className="bg-[#00F5A0] text-[#121212] hover:bg-[#00F5A0]/90 flex items-center gap-2"
-                  >
-                    {activeDemo === feature.id ? (
-                      <>
-                        <Pause className="w-4 h-4" />
-                        إخفاء العرض
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-4 h-4" />
-                        شاهد العرض التوضيحي
-                      </>
-                    )}
-                  </Button>
-                )}
+                <Button
+                  onClick={() => toggleDemo(feature.id)}
+                  className="bg-[#00F5A0] text-[#121212] hover:bg-[#00F5A0]/90 flex items-center gap-2"
+                >
+                  {activeDemo === feature.id ? (
+                    <>
+                      <Pause className="w-4 h-4" />
+                      إخفاء العرض
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-4 h-4" />
+                      شاهد العرض التوضيحي
+                    </>
+                  )}
+                </Button>
               </div>
 
               {/* Demo/Visual */}
               <div className={index % 2 === 1 ? "lg:col-start-1" : ""}>
                 <Card className="bg-[#1E1E1E] border-[#333333] overflow-hidden">
                   <CardContent className="p-0">
-                    {feature.demo && activeDemo === feature.id ? (
+                    {activeDemo === feature.id ? (
                       <div className="p-6 space-y-4">
                         <div className="bg-[#121212] rounded-lg p-4 border border-[#333333]">
                           <div className="text-sm text-[#00F5A0] mb-2">المدخل:</div>
@@ -327,32 +265,6 @@ export default function FeaturesPage() {
         ))}
       </div>
 
-      {/* Additional Features Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-[#00F5A0]/10 to-[#00F5A0]/5">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Features</h2>
-          <p className="text-lg text-center text-muted-foreground mb-10">
-            Discover the powerful capabilities that make Krkrai Platform stand out.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.slice(4).map((feature, index) => (
-              <Card key={index} className="flex flex-col items-center text-center p-6">
-                <div className="mb-4">
-                  <feature.icon className="h-12 w-12 text-primary" />
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-r from-[#00F5A0]/10 to-[#00F5A0]/5">
         <div className="max-w-4xl mx-auto text-center">
@@ -370,7 +282,7 @@ export default function FeaturesPage() {
             <Link href="/docs">
               <Button
                 variant="outline"
-                className="border-[#00F5A0] text-[#00F5A0] hover:bg-[#00F5A0]/10 px-8 py-3 text-lg font-semibold bg-transparent"
+                className="border-[#00F5A0] text-[#00F5A0] hover:bg-[#00F5A0]/10 px-8 py-3 text-lg font-semibold"
               >
                 استكشف الوثائق
               </Button>

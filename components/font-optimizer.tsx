@@ -1,12 +1,29 @@
-import type React from "react"
-import { Mona_Sans as FontSans } from "next/font/google"
-import { cn } from "@/lib/utils"
+"use client"
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
+import { useEffect } from "react"
 
-export function FontOptimizer({ children }: { children: React.ReactNode }) {
-  return <div className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>{children}</div>
+export default function FontOptimizer() {
+  useEffect(() => {
+    // تحسين تحميل الخطوط
+    if (typeof window !== "undefined" && "fonts" in document) {
+      // تحميل الخطوط بشكل غير متزامن
+      const loadFonts = async () => {
+        try {
+          // تحميل خط Inter
+          await document.fonts.load("400 16px Inter")
+          await document.fonts.load("600 16px Inter")
+          await document.fonts.load("700 16px Inter")
+
+          // إضافة فئة عند اكتمال تحميل الخطوط
+          document.documentElement.classList.add("fonts-loaded")
+        } catch (error) {
+          console.warn("Font loading failed:", error)
+        }
+      }
+
+      loadFonts()
+    }
+  }, [])
+
+  return null
 }

@@ -53,7 +53,7 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom colors for the sidebar
+        // Sidebar colors
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -68,14 +68,6 @@ const config = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Custom colors for the Krkrai theme
-        "wolf-silver": "#C0C0C0",
-        "wolf-gold": "#FFD700",
-        "wolf-blue": "#1E3A8A",
-        "wolf-black": "#0A0A0A",
-        "wolf-white": "#FFFFFF",
-        "krkr-green": "#00F5A0",
-        "cosmic-purple": "#6B46C1",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -91,10 +83,28 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 20px rgba(255, 77, 0, 0.3)" },
+          "50%": { boxShadow: "0 0 30px rgba(255, 77, 0, 0.6)" },
+        },
+        floating: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite alternate",
+        floating: "floating 3s ease-in-out infinite",
+      },
+      backgroundImage: {
+        "gradient-bg": "linear-gradient(135deg, #1a1a1a 0%, #2d1b69 50%, #ff4d00 100%)",
+        "gradient-text-orange": "linear-gradient(135deg, #ff4d00, #ff8a00, #ff0040)",
+        "btn-gradient": "linear-gradient(135deg, #ff4d00, #ff8a00)",
+        "chat-bubble-user": "linear-gradient(135deg, #ff4d00, #ff8a00)",
+        "chat-bubble-ai": "linear-gradient(135deg, #2d1b69, #4c1d95)",
+        "section-bg": "linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2d1b69 100%)",
       },
     },
   },

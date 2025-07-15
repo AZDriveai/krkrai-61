@@ -1,332 +1,384 @@
 "use client"
 
-import type React from "react"
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
+import {
+  TrendingUp,
+  TrendingDown,
+  Users,
+  Zap,
+  Brain,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Target,
+  BarChart3,
+  PieChart,
+  Activity,
+  Sparkles,
+} from "lucide-react"
 
-import { AvatarFallback } from "@/components/ui/avatar"
+interface MetricCard {
+  id: string
+  title: string
+  value: string | number
+  change: number
+  trend: "up" | "down" | "stable"
+  icon: any
+  color: string
+  description: string
+  target?: number
+  unit?: string
+}
 
-import { AvatarImage } from "@/components/ui/avatar"
+interface Alert {
+  id: string
+  type: "success" | "warning" | "error" | "info"
+  title: string
+  message: string
+  timestamp: Date
+  action?: string
+}
 
-import { Avatar } from "@/components/ui/avatar"
+export default function AdvancedDashboard() {
+  const [metrics, setMetrics] = useState<MetricCard[]>([
+    {
+      id: "active-users",
+      title: "المستخدمون النشطون",
+      value: 1247,
+      change: 12.5,
+      trend: "up",
+      icon: Users,
+      color: "from-blue-500 to-cyan-500",
+      description: "زيادة في النشاط هذا الشهر",
+      target: 1500,
+      unit: "مستخدم",
+    },
+    {
+      id: "api-requests",
+      title: "طلبات API",
+      value: "23.4K",
+      change: 23.1,
+      trend: "up",
+      icon: Zap,
+      color: "from-yellow-500 to-orange-500",
+      description: "نمو قوي في الاستخدام",
+      target: 25000,
+      unit: "طلب",
+    },
+    {
+      id: "ai-accuracy",
+      title: "دقة الذكاء الاصطناعي",
+      value: "97.8%",
+      change: 2.3,
+      trend: "up",
+      icon: Brain,
+      color: "from-purple-500 to-pink-500",
+      description: "تحسن مستمر في الأداء",
+      target: 98,
+      unit: "%",
+    },
+    {
+      id: "response-time",
+      title: "وقت الاستجابة",
+      value: "1.2s",
+      change: -15.2,
+      trend: "up",
+      icon: Activity,
+      color: "from-green-500 to-emerald-500",
+      description: "تحسن في السرعة",
+      target: 1.0,
+      unit: "ثانية",
+    },
+  ])
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { UserAnalytics } from "@/components/user-analytics"
-import { Line, LineChart, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, BarChart, Bar } from "recharts"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart" // Assuming chart components are available
+  const [alerts, setAlerts] = useState<Alert[]>([
+    {
+      id: "1",
+      type: "success",
+      title: "تحديث ناجح",
+      message: "تم تحديث نموذج WOLF-AI بنجاح إلى الإصدار 2.1",
+      timestamp: new Date(Date.now() - 5 * 60 * 1000),
+      action: "عرض التفاصيل",
+    },
+    {
+      id: "2",
+      type: "warning",
+      title: "استخدام مرتفع",
+      message: "وصل استخدام API إلى 85% من الحد المسموح",
+      timestamp: new Date(Date.now() - 15 * 60 * 1000),
+      action: "ترقية الخطة",
+    },
+    {
+      id: "3",
+      type: "info",
+      title: "ميزة جديدة",
+      message: "تم إضافة تحليلات متقدمة للمحادثات الذكية",
+      timestamp: new Date(Date.now() - 30 * 60 * 1000),
+      action: "استكشاف",
+    },
+  ])
 
-// Sample data for charts
-const salesData = [
-  { name: "Jan", sales: 4000, revenue: 2400 },
-  { name: "Feb", sales: 3000, revenue: 1398 },
-  { name: "Mar", sales: 2000, revenue: 9800 },
-  { name: "Apr", sales: 2780, revenue: 3908 },
-  { name: "May", sales: 1890, revenue: 4800 },
-  { name: "Jun", sales: 2390, revenue: 3800 },
-  { name: "Jul", sales: 3490, revenue: 4300 },
-]
+  const [insights, setInsights] = useState([
+    {
+      id: "1",
+      title: "نمو المستخدمين",
+      description: "زيادة 12.5% في المستخدمين النشطون مقارنة بالشهر الماضي",
+      impact: "إيجابي",
+      confidence: 95,
+    },
+    {
+      id: "2",
+      title: "كفاءة النظام",
+      description: "تحسن وقت الاستجابة بنسبة 15% بعد التحديثات الأخيرة",
+      impact: "إيجابي",
+      confidence: 88,
+    },
+    {
+      id: "3",
+      title: "توصية التحسين",
+      description: "يُنصح بزيادة سعة الخادم لاستيعاب النمو المتوقع",
+      impact: "محايد",
+      confidence: 76,
+    },
+  ])
 
-const trafficData = [
-  { name: "Mon", visits: 2500, pageviews: 4000 },
-  { name: "Tue", visits: 3000, pageviews: 4500 },
-  { name: "Wed", visits: 2000, pageviews: 3000 },
-  { name: "Thu", visits: 2780, pageviews: 4200 },
-  { name: "Fri", visits: 1890, pageviews: 2800 },
-  { name: "Sat", visits: 2390, pageviews: 3500 },
-  { name: "Sun", visits: 3490, pageviews: 5000 },
-]
+  // محاكاة تحديث البيانات في الوقت الفعلي
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMetrics((prev) =>
+        prev.map((metric) => ({
+          ...metric,
+          value: typeof metric.value === "number" ? metric.value + Math.floor(Math.random() * 10 - 5) : metric.value,
+          change: metric.change + (Math.random() - 0.5) * 2,
+        })),
+      )
+    }, 30000) // تحديث كل 30 ثانية
 
-export function AdvancedDashboard() {
+    return () => clearInterval(interval)
+  }, [])
+
+  const getAlertIcon = (type: string) => {
+    switch (type) {
+      case "success":
+        return <CheckCircle className="w-4 h-4 text-green-400" />
+      case "warning":
+        return <AlertTriangle className="w-4 h-4 text-yellow-400" />
+      case "error":
+        return <AlertTriangle className="w-4 h-4 text-red-400" />
+      default:
+        return <Clock className="w-4 h-4 text-blue-400" />
+    }
+  }
+
+  const getAlertColor = (type: string) => {
+    switch (type) {
+      case "success":
+        return "bg-green-500/20 border-green-500/30"
+      case "warning":
+        return "bg-yellow-500/20 border-yellow-500/30"
+      case "error":
+        return "bg-red-500/20 border-red-500/30"
+      default:
+        return "bg-blue-500/20 border-blue-500/30"
+    }
+  }
+
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case "up":
+        return <TrendingUp className="w-4 h-4 text-green-400" />
+      case "down":
+        return <TrendingDown className="w-4 h-4 text-red-400" />
+      default:
+        return <Target className="w-4 h-4 text-gray-400" />
+    }
+  }
+
+  const formatTimeAgo = (date: Date) => {
+    const now = new Date()
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
+
+    if (diffInMinutes < 1) return "الآن"
+    if (diffInMinutes < 60) return `منذ ${diffInMinutes} دقيقة`
+    if (diffInMinutes < 1440) return `منذ ${Math.floor(diffInMinutes / 60)} ساعة`
+    return `منذ ${Math.floor(diffInMinutes / 1440)} يوم`
+  }
+
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+    <div className="space-y-8">
+      {/* المؤشرات الرئيسية */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {metrics.map((metric) => {
+          const IconComponent = metric.icon
+          const progress = metric.target
+            ? (Number.parseFloat(metric.value.toString().replace(/[^\d.]/g, "")) / metric.target) * 100
+            : 0
+
+          return (
+            <Card
+              key={metric.id}
+              className="bg-black/40 border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-300 hover:scale-105 group"
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div
+                    className={`w-12 h-12 bg-gradient-to-r ${metric.color} rounded-full flex items-center justify-center`}
+                  >
+                    <IconComponent className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {getTrendIcon(metric.trend)}
+                    <span
+                      className={`text-sm font-semibold ${
+                        metric.change > 0 ? "text-green-400" : metric.change < 0 ? "text-red-400" : "text-gray-400"
+                      }`}
+                    >
+                      {metric.change > 0 ? "+" : ""}
+                      {metric.change.toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-gray-300">{metric.title}</h3>
+                  <div className="text-2xl font-bold text-white">{metric.value}</div>
+                  <p className="text-xs text-gray-400">{metric.description}</p>
+
+                  {metric.target && (
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs text-gray-400">
+                        <span>التقدم نحو الهدف</span>
+                        <span>{progress.toFixed(0)}%</span>
+                      </div>
+                      <Progress value={Math.min(progress, 100)} className="h-2" />
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+
+      {/* الرؤى الذكية والتنبيهات */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* الرؤى الذكية */}
+        <Card className="bg-black/40 border-white/10 backdrop-blur-md">
+          <CardHeader>
+            <CardTitle className="text-[#FFD700] flex items-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              الرؤى الذكية
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$45,231.89</div>
-            <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+          <CardContent className="space-y-4">
+            {insights.map((insight) => (
+              <div key={insight.id} className="p-4 bg-white/5 rounded-lg border border-white/10">
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-semibold text-white">{insight.title}</h4>
+                  <Badge
+                    className={`text-xs ${
+                      insight.impact === "إيجابي"
+                        ? "bg-green-500/20 text-green-400 border-green-500/30"
+                        : insight.impact === "سلبي"
+                          ? "bg-red-500/20 text-red-400 border-red-500/30"
+                          : "bg-gray-500/20 text-gray-400 border-gray-500/30"
+                    }`}
+                  >
+                    {insight.impact}
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-300 mb-3">{insight.description}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400">مستوى الثقة:</span>
+                    <div className="flex items-center gap-1">
+                      <Progress value={insight.confidence} className="w-16 h-2" />
+                      <span className="text-xs text-gray-300">{insight.confidence}%</span>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="ghost" className="text-[#FFD700] hover:bg-[#FFD700]/10">
+                    عرض التفاصيل
+                  </Button>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+
+        {/* التنبيهات */}
+        <Card className="bg-black/40 border-white/10 backdrop-blur-md">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5" />
+              التنبيهات والإشعارات
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+2350</div>
-            <p className="text-xs text-muted-foreground">+180.1% from last month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sales</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+12,234</div>
-            <p className="text-xs text-muted-foreground">+19% from last month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Now</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+573</div>
-            <p className="text-xs text-muted-foreground">+201 since last hour</p>
+          <CardContent className="space-y-3">
+            {alerts.map((alert) => (
+              <div key={alert.id} className={`p-4 rounded-lg border ${getAlertColor(alert.type)} backdrop-blur-sm`}>
+                <div className="flex items-start gap-3">
+                  {getAlertIcon(alert.type)}
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="font-semibold text-sm text-white">{alert.title}</h4>
+                      <span className="text-xs text-gray-400">{formatTimeAgo(alert.timestamp)}</span>
+                    </div>
+                    <p className="text-sm text-gray-300 mb-2">{alert.message}</p>
+                    {alert.action && (
+                      <Button size="sm" variant="ghost" className="text-xs h-6 px-2 text-white hover:bg-white/10">
+                        {alert.action}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
-              <CardHeader>
-                <CardTitle>Sales Overview</CardTitle>
-                <CardDescription>You made 265 sales this month.</CardDescription>
-              </CardHeader>
-              <CardContent className="h-[350px]">
-                <ChartContainer
-                  config={{
-                    sales: {
-                      label: "Sales",
-                      color: "hsl(var(--chart-1))",
-                    },
-                    revenue: {
-                      label: "Revenue",
-                      color: "hsl(var(--chart-2))",
-                    },
-                  }}
-                  className="h-full"
-                >
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={salesData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Legend />
-                      <Line type="monotone" dataKey="sales" stroke="var(--color-sales)" name="Sales" />
-                      <Line type="monotone" dataKey="revenue" stroke="var(--color-revenue)" name="Revenue" />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card>
-            <Card className="col-span-3">
-              <CardHeader>
-                <CardTitle>Recent Sales</CardTitle>
-                <CardDescription>You have 265 sales this month.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-8">
-                  <div className="flex items-center">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src="/placeholder-user.jpg" alt="Avatar" />
-                      <AvatarFallback>OM</AvatarFallback>
-                    </Avatar>
-                    <div className="ml-4 space-y-1">
-                      <p className="text-sm font-medium leading-none">Olivia Martin</p>
-                      <p className="text-sm text-muted-foreground">olivia.martin@email.com</p>
-                    </div>
-                    <div className="ml-auto font-medium">+$1,999.00</div>
-                  </div>
-                  <div className="flex items-center">
-                    <Avatar className="flex h-9 w-9 items-center justify-center space-y-0 border">
-                      <AvatarImage src="/placeholder-user.jpg" alt="Avatar" />
-                      <AvatarFallback>JL</AvatarFallback>
-                    </Avatar>
-                    <div className="ml-4 space-y-1">
-                      <p className="text-sm font-medium leading-none">Jackson Lee</p>
-                      <p className="text-sm text-muted-foreground">jackson.lee@email.com</p>
-                    </div>
-                    <div className="ml-auto font-medium">+$39.00</div>
-                  </div>
-                  <div className="flex items-center">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src="/placeholder-user.jpg" alt="Avatar" />
-                      <AvatarFallback>IN</AvatarFallback>
-                    </Avatar>
-                    <div className="ml-4 space-y-1">
-                      <p className="text-sm font-medium leading-none">Isabella Nguyen</p>
-                      <p className="text-sm text-muted-foreground">isabella.nguyen@email.com</p>
-                    </div>
-                    <div className="ml-auto font-medium">+$299.00</div>
-                  </div>
-                  <div className="flex items-center">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src="/placeholder-user.jpg" alt="Avatar" />
-                      <AvatarFallback>WK</AvatarFallback>
-                    </Avatar>
-                    <div className="ml-4 space-y-1">
-                      <p className="text-sm font-medium leading-none">William Kim</p>
-                      <p className="text-sm text-muted-foreground">will@email.com</p>
-                    </div>
-                    <div className="ml-auto font-medium">+$99.00</div>
-                  </div>
-                  <div className="flex items-center">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src="/placeholder-user.jpg" alt="Avatar" />
-                      <AvatarFallback>SD</AvatarFallback>
-                    </Avatar>
-                    <div className="ml-4 space-y-1">
-                      <p className="text-sm font-medium leading-none">Sofia Davis</p>
-                      <p className="text-sm text-muted-foreground">sofia.davis@email.com</p>
-                    </div>
-                    <div className="ml-auto font-medium">+$39.00</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-3">
-              <CardHeader>
-                <CardTitle>Website Traffic</CardTitle>
-                <CardDescription>Daily visits and pageviews.</CardDescription>
-              </CardHeader>
-              <CardContent className="h-[350px]">
-                <ChartContainer
-                  config={{
-                    visits: {
-                      label: "Visits",
-                      color: "hsl(var(--chart-3))",
-                    },
-                    pageviews: {
-                      label: "Pageviews",
-                      color: "hsl(var(--chart-4))",
-                    },
-                  }}
-                  className="h-full"
-                >
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={trafficData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Legend />
-                      <Bar dataKey="visits" fill="var(--color-visits)" name="Visits" />
-                      <Bar dataKey="pageviews" fill="var(--color-pageviews)" name="Pageviews" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card>
-            <Card className="col-span-4">
-              <CardHeader>
-                <CardTitle>User Engagement</CardTitle>
-                <CardDescription>Key metrics for user interaction.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <UserAnalytics />
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        <TabsContent value="analytics" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Detailed Analytics</CardTitle>
-              <CardDescription>In-depth analysis of your platform's performance.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Analytics content goes here. This could include more detailed charts, tables, and reports.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      {/* الرسوم البيانية التفاعلية */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="bg-black/40 border-white/10 backdrop-blur-md">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <BarChart3 className="w-5 h-5" />
+              اتجاهات الاستخدام
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center text-gray-400">
+              <div className="text-center">
+                <BarChart3 className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                <p>رسم بياني تفاعلي لاتجاهات الاستخدام</p>
+                <p className="text-sm mt-2">سيتم تحميل البيانات قريباً...</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-black/40 border-white/10 backdrop-blur-md">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <PieChart className="w-5 h-5" />
+              توزيع الاستخدام
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center text-gray-400">
+              <div className="text-center">
+                <PieChart className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                <p>رسم دائري لتوزيع الاستخدام</p>
+                <p className="text-sm mt-2">سيتم تحميل البيانات قريباً...</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
-  )
-}
-
-// Dummy icons for the dashboard cards
-function DollarSign(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="12" x2="12" y1="2" y2="22" />
-      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-    </svg>
-  )
-}
-
-function Users(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13V5a2 2 0 0 1 2 2v3" />
-    </svg>
-  )
-}
-
-function CreditCard(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="20" height="14" x="2" y="5" rx="2" />
-      <line x1="2" x2="22" y1="10" y2="10" />
-    </svg>
-  )
-}
-
-function Activity(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-    </svg>
   )
 }

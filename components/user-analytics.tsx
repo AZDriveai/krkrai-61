@@ -1,9 +1,9 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import {
   Users,
@@ -42,21 +42,6 @@ interface PageAnalytics {
   bounceRate: number
   exitRate: number
 }
-
-const userEngagementData = [
-  { metric: "Daily Active Users", value: "1,234", trend: "+5%", progress: 70 },
-  { metric: "Session Duration (Avg)", value: "5:30 min", trend: "+10%", progress: 85 },
-  { metric: "Bounce Rate", value: "35%", trend: "-2%", progress: 40 },
-  { metric: "Feature Adoption", value: "78%", trend: "+7%", progress: 90 },
-  { metric: "Conversion Rate", value: "4.2%", trend: "+0.5%", progress: 60 },
-]
-
-const topUsers = [
-  { name: "Alice Johnson", activity: "120 sessions", lastActive: "2 hours ago" },
-  { name: "Bob Williams", activity: "95 sessions", lastActive: "1 day ago" },
-  { name: "Charlie Brown", activity: "80 sessions", lastActive: "3 days ago" },
-  { name: "Diana Prince", activity: "70 sessions", lastActive: "1 week ago" },
-]
 
 export default function UserAnalytics() {
   const [activeUsers, setActiveUsers] = useState(127)
@@ -195,151 +180,82 @@ export default function UserAnalytics() {
   }
 
   return (
-    <div className="grid gap-6">
+    <div className="space-y-8">
       {/* المؤشرات الرئيسية */}
-      <Card className="bg-black/40 border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-300">
-        <CardHeader>
-          <CardTitle className="text-[#FFD700]">Analytics Dashboard</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="bg-black/40 border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
-                    <Activity className="w-6 h-6 text-white" />
-                  </div>
-                  <Badge className="bg-green-500/20 text-green-400 border-green-500/30">مباشر</Badge>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-300">المستخدمون النشطون</h3>
-                  <div className="text-2xl font-bold text-white">{activeUsers}</div>
-                  <p className="text-xs text-gray-400">متصلون الآن</p>
-                </div>
-              </CardContent>
-            </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="bg-black/40 border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                <Activity className="w-6 h-6 text-white" />
+              </div>
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/30">مباشر</Badge>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-gray-300">المستخدمون النشطون</h3>
+              <div className="text-2xl font-bold text-white">{activeUsers}</div>
+              <p className="text-xs text-gray-400">متصلون الآن</p>
+            </div>
+          </CardContent>
+        </Card>
 
-            <Card className="bg-black/40 border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
-                    <Users className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <TrendingUp className="w-4 h-4 text-green-400" />
-                    <span className="text-sm font-semibold text-green-400">+12%</span>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-300">إجمالي الجلسات</h3>
-                  <div className="text-2xl font-bold text-white">{totalSessions.toLocaleString()}</div>
-                  <p className="text-xs text-gray-400">هذا الشهر</p>
-                </div>
-              </CardContent>
-            </Card>
+        <Card className="bg-black/40 border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex items-center gap-1">
+                <TrendingUp className="w-4 h-4 text-green-400" />
+                <span className="text-sm font-semibold text-green-400">+12%</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-gray-300">إجمالي الجلسات</h3>
+              <div className="text-2xl font-bold text-white">{totalSessions.toLocaleString()}</div>
+              <p className="text-xs text-gray-400">هذا الشهر</p>
+            </div>
+          </CardContent>
+        </Card>
 
-            <Card className="bg-black/40 border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <TrendingUp className="w-4 h-4 text-green-400" />
-                    <span className="text-sm font-semibold text-green-400">+8%</span>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-300">متوسط مدة الجلسة</h3>
-                  <div className="text-2xl font-bold text-white">{avgSessionDuration} دقيقة</div>
-                  <p className="text-xs text-gray-400">تحسن من الشهر الماضي</p>
-                </div>
-              </CardContent>
-            </Card>
+        <Card className="bg-black/40 border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                <Clock className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex items-center gap-1">
+                <TrendingUp className="w-4 h-4 text-green-400" />
+                <span className="text-sm font-semibold text-green-400">+8%</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-gray-300">متوسط مدة الجلسة</h3>
+              <div className="text-2xl font-bold text-white">{avgSessionDuration} دقيقة</div>
+              <p className="text-xs text-gray-400">تحسن من الشهر الماضي</p>
+            </div>
+          </CardContent>
+        </Card>
 
-            <Card className="bg-black/40 border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
-                    <MousePointer className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <TrendingDown className="w-4 h-4 text-green-400" />
-                    <span className="text-sm font-semibold text-green-400">-5%</span>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-300">معدل الارتداد</h3>
-                  <div className="text-2xl font-bold text-white">{bounceRate}%</div>
-                  <p className="text-xs text-gray-400">انخفاض إيجابي</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Engagement Metrics */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Engagement Metrics</CardTitle>
-          <CardDescription>Key performance indicators for user interaction.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Metric</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead>Trend</TableHead>
-                <TableHead>Progress</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {userEngagementData.map((data, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">{data.metric}</TableCell>
-                  <TableCell>{data.value}</TableCell>
-                  <TableCell className={data.trend.startsWith("+") ? "text-green-500" : "text-red-500"}>
-                    {data.trend}
-                  </TableCell>
-                  <TableCell>
-                    <Progress value={data.progress} className="w-[100px]" />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* Top Active Users */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Top Active Users</CardTitle>
-          <CardDescription>Users with the highest recent activity.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Activity</TableHead>
-                <TableHead>Last Active</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {topUsers.map((user, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">{user.name}</TableCell>
-                  <TableCell>{user.activity}</TableCell>
-                  <TableCell>{user.lastActive}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+        <Card className="bg-black/40 border-white/10 backdrop-blur-md hover:border-[#FFD700]/50 transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
+                <MousePointer className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex items-center gap-1">
+                <TrendingDown className="w-4 h-4 text-green-400" />
+                <span className="text-sm font-semibold text-green-400">-5%</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-gray-300">معدل الارتداد</h3>
+              <div className="text-2xl font-bold text-white">{bounceRate}%</div>
+              <p className="text-xs text-gray-400">انخفاض إيجابي</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* الصفحات الأكثر زيارة وإحصائيات الأجهزة */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -481,9 +397,9 @@ export default function UserAnalytics() {
           </div>
 
           <div className="mt-6 text-center">
-            <button variant="outline" className="border-white/30 text-white hover:bg-white/10">
+            <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
               عرض جميع الجلسات
-            </button>
+            </Button>
           </div>
         </CardContent>
       </Card>

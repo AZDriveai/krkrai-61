@@ -3,111 +3,131 @@
 import { useEffect, useRef } from "react"
 
 interface Particle {
-  id: number
   x: number
   y: number
   size: number
   speedX: number
   speedY: number
-  opacity: number
   color: string
+  opacity: number
 }
 
-export function CosmicParticles() {
-  const containerRef = useRef<HTMLDivElement>(null)
+export default function CosmicParticles() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const particlesRef = useRef<Particle[]>([])
-  const animationFrameId = useRef<number | null>(null)
-
-  const colors = ["#C0C0C0", "#FFD700", "#1E3A8A", "#00F5A0", "#6B46C1"] // Wolf Silver, Gold, Blue, KRKR Green, Cosmic Purple
-
-  const createParticle = (): Particle => {
-    const container = containerRef.current
-    if (!container) return {} as Particle
-
-    const size = Math.random() * 3 + 1 // 1 to 4px
-    const x = Math.random() * container.offsetWidth
-    const y = Math.random() * container.offsetHeight
-    const speedX = (Math.random() - 0.5) * 0.5 // -0.25 to 0.25
-    const speedY = (Math.random() - 0.5) * 0.5 // -0.25 to 0.25
-    const opacity = Math.random() * 0.5 + 0.2 // 0.2 to 0.7
-    const color = colors[Math.floor(Math.random() * colors.length)]
-
-    return {
-      id: Date.now() + Math.random(),
-      x,
-      y,
-      size,
-      speedX,
-      speedY,
-      opacity,
-      color,
-    }
-  }
-
-  const updateParticles = () => {
-    if (!containerRef.current) return
-
-    const containerWidth = containerRef.current.offsetWidth
-    const containerHeight = containerRef.current.offsetHeight
-
-    particlesRef.current = particlesRef.current
-      .map((p) => {
-        p.x += p.speedX
-        p.y += p.speedY
-        p.opacity -= 0.001 // Slowly fade out
-
-        // Reset particle if it goes out of bounds or fades out
-        if (
-          p.opacity <= 0 ||
-          p.x < -p.size ||
-          p.x > containerWidth + p.size ||
-          p.y < -p.size ||
-          p.y > containerHeight + p.size
-        ) {
-          return createParticle()
-        }
-        return p
-      })
-      .filter(Boolean) as Particle[] // Filter out any undefined particles if createParticle returns empty
-
-    renderParticles()
-    animationFrameId.current = requestAnimationFrame(updateParticles)
-  }
-
-  const renderParticles = () => {
-    if (!containerRef.current) return
-    containerRef.current.innerHTML = "" // Clear previous particles
-
-    particlesRef.current.forEach((p) => {
-      const particleDiv = document.createElement("div")
-      particleDiv.className = "cosmic-particle"
-      particleDiv.style.cssText = `
-        left: ${p.x}px;
-        top: ${p.y}px;
-        width: ${p.size}px;
-        height: ${p.size}px;
-        opacity: ${p.opacity};
-        background-color: ${p.color};
-      `
-      containerRef.current?.appendChild(particleDiv)
-    })
-  }
+  const animationRef = useRef<number>()
 
   useEffect(() => {
-    if (containerRef.current) {
-      // Initialize particles
-      for (let i = 0; i < 100; i++) {
-        particlesRef.current.push(createParticle())
-      }
-      animationFrameId.current = requestAnimationFrame(updateParticles)
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
     }
 
+    resizeCanvas()
+    window.addEventListener("resize", resizeCanvas)
+
+    // توليد جسيمات ذهبية كمومية
+    class GoldenParticle implements Particle {
+      x: number
+      y: number
+      size: number
+      speedX: number
+      speedY: number
+      color: string
+      opacity: number
+
+      constructor() {
+        this.x = Math.random() * canvas.width
+        this.y = Math.random() * canvas.height
+        this.size = Math.random() * 3 + 1
+        this.speedX = (Math.random() - 0.5) * 0.5
+        this.speedY = (Math.random() - 0.5) * 0.5
+        this.opacity = Math.random() * 0.5 + 0.1
+        this.color = `rgba(255, 215, 0, ${this.opacity})`
+      }
+
+      update() {
+        // حركة عشوائية كمومية
+        this.x += this.speedX + (Math.random() - 0.5) * 0.8
+        this.y += this.speedY + (Math.random() - 0.5) * 0.8
+
+        // إعادة تدوير الجسيمات عند الحافة
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1
+
+        // تأثير النبض
+        this.opacity = 0.1 + Math.abs(Math.sin(Date.now() * 0.001 + this.x * 0.01)) * 0.4
+        this.color = `rgba(255, 215, 0, ${this.opacity})`
+      }
+
+      draw() {
+        if (!ctx) return
+        ctx.fillStyle = this.color
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
+        ctx.fill()
+
+        // إضافة هالة ذهبية
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255, 215, 0, ${this.opacity * 0.1})`
+        ctx.fill()
+      }
+    }
+
+    // خلق الكون الجسيمي
+    const initParticles = () => {
+      const particleCount = 300
+      particlesRef.current = []
+      for (let i = 0; i < particleCount; i++) {
+        particlesRef.current.push(new GoldenParticle())
+      }
+    }
+
+    // محاكاة الزمن الكوني
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      // خلفية متدرجة كونية
+      const gradient = ctx.createRadialGradient(
+        canvas.width / 2,
+        canvas.height / 2,
+        0,
+        canvas.width / 2,
+        canvas.height / 2,
+        canvas.width / 2,
+      )
+      gradient.addColorStop(0, "rgba(10, 10, 25, 0.1)")
+      gradient.addColorStop(1, "rgba(0, 0, 0, 0.3)")
+      ctx.fillStyle = gradient
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      particlesRef.current.forEach((particle) => {
+        particle.update()
+        particle.draw()
+      })
+
+      animationRef.current = requestAnimationFrame(animate)
+    }
+
+    initParticles()
+    animate()
+
     return () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current)
+      window.removeEventListener("resize", resizeCanvas)
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
       }
     }
   }, [])
 
-  return <div ref={containerRef} className="cosmic-particles-container" />
+  return (
+    <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" style={{ background: "transparent" }} />
+  )
 }
